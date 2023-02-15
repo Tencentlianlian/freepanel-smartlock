@@ -105,7 +105,12 @@ module.exports = (env, argv) => {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                plugins: [require('autoprefixer')()],
+                plugins: [
+                  require('autoprefixer')(),
+                  require('postcss-px-to-viewport')({
+                    viewportWidth: 375,
+                  })
+                ],
               },
             },
             {

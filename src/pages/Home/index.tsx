@@ -7,12 +7,15 @@ import pwdImg from '../../assets/icon_password.svg';
 
 export function Home() {
   const [{deviceData, deviceStatus}] = useDeviceInfo();
+  const isUnlock = deviceData.lock_motor_state === 1;
   console.log('deviceData', deviceData);
-  return <div className={classNames('page home-page', {unlock: deviceData.lock_motor_state === 1})}>
+  return <div className={classNames('page home-page', {unlock: isUnlock})}>
     <div className="lock-state">
       <img src=" https://iot.gtimg.com/cdn/ad/shuaisguo/lock+1676455008626.png" alt="" />
       <div className="battery">
         <Battery value={deviceData.battery_percentage as number} showLabel/>
+        <div className="splitor"></div>
+        <div className='lock-label'>{isUnlock ? '已开锁' : '已关锁'}</div>
       </div>
     </div>
 

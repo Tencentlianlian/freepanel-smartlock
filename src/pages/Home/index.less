@@ -12,6 +12,7 @@
     div.battery{
       display: flex;
       justify-content: center;
+      align-items: center;
     }
     >img{
       width: 160px;
@@ -19,10 +20,19 @@
     }
   }
 
+  .splitor{
+    width: 1px;
+    height: 10px;
+    opacity: 1;
+    background: rgba(21,22,26,0.3);
+    margin: 0 8px;
+  }
+
   .card-list{
     white-space: nowrap;
     overflow: auto;
     margin-bottom: 12px;
+    padding-left: 16px;
     .card-icon{
       width: 24px;
       height: 24px;
@@ -33,6 +43,7 @@
       width: 104px;
       margin-right: 0;
       height: 88px;
+      margin: 0 12px 0 0;
       &-title{
         margin-top: 12px;
       }
