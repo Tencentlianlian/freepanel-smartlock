@@ -82,6 +82,19 @@ module.exports = (env, argv) => {
           }
         },
         {
+          test: /\.svg$/,
+          use: [
+            'url-loader',
+            'svg-transform-loader',
+            {
+              loader: 'svgo-loader',
+              options: {
+                plugins: [{ removeTitle: true }, { convertStyleToAttrs: true }],
+              },
+            },
+          ],
+        },
+        {
           test: /\.(le|c)ss$/,
           use: [
             MiniCssExtractPlugin.loader,

@@ -1,0 +1,41 @@
+.home-page{
+  height: 100vh;
+  background-image: url('../../assets/bg2.svg');
+  background-size: cover;
+  &.unlock{
+    background-image: url('../../assets/bg1.svg');
+  }
+  .lock-state{
+    margin: 0 auto 26px;
+    padding-top: 52px;
+    width: max-content;
+    div.battery{
+      display: flex;
+      justify-content: center;
+    }
+    >img{
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  .card-list{
+    white-space: nowrap;
+    overflow: auto;
+    margin-bottom: 12px;
+    .card-icon{
+      width: 24px;
+      height: 24px;
+    }
+
+    .card-btn{
+      display: inline-block;
+      width: 104px;
+      margin-right: 0;
+      height: 88px;
+      &-title{
+        margin-top: 12px;
+      }
+    }
+  }
+}

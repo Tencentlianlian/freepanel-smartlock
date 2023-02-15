@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Home, Password } from './pages';
+import 'qcloud-iot-panel-component/lib/index.css'
 
 import {
   createHashRouter,
