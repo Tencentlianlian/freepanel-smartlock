@@ -1,20 +1,20 @@
 export type TemplateDataType =
-  | "bool"
-  | "int"
-  | "string"
-  | "float"
-  | "enum"
-  | "stringenum"
-  | "timestamp"
-  | "struct"
-  | "array";
+  | 'bool'
+  | 'int'
+  | 'string'
+  | 'float'
+  | 'enum'
+  | 'stringenum'
+  | 'timestamp'
+  | 'struct'
+  | 'array';
 
 export const isEnumType = (
-  propertyDefine: DataTemplateProperty["define"],
-): propertyDefine is DataTemplatePropertyEnum["define"] | DataTemplatePropertyStringEnum["define"] => {
+  propertyDefine: DataTemplateProperty['define'],
+): propertyDefine is DataTemplatePropertyEnum['define'] | DataTemplatePropertyStringEnum['define'] => {
   const type = propertyDefine?.type;
 
-  return ["enum", "stringenum"].includes(type);
+  return ['enum', 'stringenum'].includes(type);
 };
 
 export interface DataTemplate {
@@ -33,7 +33,7 @@ export interface DataTemplatePropertyBase {
   name: string;
   desc: string;
   required: boolean;
-  mode: "r" | "rw";
+  mode: 'r' | 'rw';
   define: {
     type: TemplateDataType;
   };
@@ -60,19 +60,19 @@ export type BaseDataTemplateProperty =
 
 export interface DataTemplatePropertyBool extends DataTemplatePropertyBase {
   define: {
-    type: "bool";
+    type: 'bool';
   } & EnumLikeDefine;
 }
 
 export interface DataTemplatePropertyEnum extends DataTemplatePropertyBase {
   define: EnumLikeDefine & {
-    type: "enum";
+    type: 'enum';
   };
 }
 
 export interface DataTemplatePropertyStringEnum extends DataTemplatePropertyBase {
   define: EnumLikeDefine & {
-    type: "stringenum";
+    type: 'stringenum';
   };
 }
 
@@ -86,25 +86,25 @@ export interface NumberDefine {
 
 export interface DataTemplatePropertyInt extends DataTemplatePropertyBase {
   define: NumberDefine & {
-    type: "int";
+    type: 'int';
   };
 }
 
 export interface DataTemplatePropertyFloat extends DataTemplatePropertyBase {
   define: NumberDefine & {
-    type: "float";
+    type: 'float';
   };
 }
 
 export interface DataTemplatePropertyTimestamp extends DataTemplatePropertyBase {
   define: {
-    type: "timestamp";
+    type: 'timestamp';
   };
 }
 
 export interface DataTemplatePropertyString extends DataTemplatePropertyBase {
   define: {
-    type: "string";
+    type: 'string';
     max: number;
     min: number;
   };
@@ -117,31 +117,31 @@ export interface TemplateSpecBase {
 }
 
 export interface TemplateSpecBool extends TemplateSpecBase {
-  dataType: DataTemplatePropertyBool["define"];
+  dataType: DataTemplatePropertyBool['define'];
 }
 
 export interface TemplateSpecEnum extends TemplateSpecBase {
-  dataType: DataTemplatePropertyEnum["define"];
+  dataType: DataTemplatePropertyEnum['define'];
 }
 
 export interface TemplateSpecStringEnum extends TemplateSpecBase {
-  dataType: DataTemplatePropertyStringEnum["define"];
+  dataType: DataTemplatePropertyStringEnum['define'];
 }
 
 export interface TemplateSpecInt extends TemplateSpecBase {
-  dataType: DataTemplatePropertyInt["define"];
+  dataType: DataTemplatePropertyInt['define'];
 }
 
 export interface TemplateSpecFloat extends TemplateSpecBase {
-  dataType: DataTemplatePropertyFloat["define"];
+  dataType: DataTemplatePropertyFloat['define'];
 }
 
 export interface TemplateSpecTimestamp extends TemplateSpecBase {
-  dataType: DataTemplatePropertyTimestamp["define"];
+  dataType: DataTemplatePropertyTimestamp['define'];
 }
 
 export interface TemplateSpecString extends TemplateSpecBase {
-  dataType: DataTemplatePropertyString["define"];
+  dataType: DataTemplatePropertyString['define'];
 }
 
 export type TemplateSpecDefine =
@@ -156,24 +156,24 @@ export type TemplateSpecDefine =
 // 结构体
 export interface DataTemplatePropertyStruct extends DataTemplatePropertyBase {
   define: {
-    type: "struct";
+    type: 'struct';
     specs: TemplateSpecDefine[];
   };
 }
 
 // 数组支持4种结构，int|float|string|struct
-export type DataTemplatePropertyArrayStruct = DataTemplatePropertyStruct["define"];
+export type DataTemplatePropertyArrayStruct = DataTemplatePropertyStruct['define'];
 
-export type DataTemplatePropertyArrayInt = DataTemplatePropertyInt["define"];
+export type DataTemplatePropertyArrayInt = DataTemplatePropertyInt['define'];
 
-export type DataTemplatePropertyArrayFloat = DataTemplatePropertyFloat["define"];
+export type DataTemplatePropertyArrayFloat = DataTemplatePropertyFloat['define'];
 
-export type DataTemplatePropertyArrayString = DataTemplatePropertyString["define"];
+export type DataTemplatePropertyArrayString = DataTemplatePropertyString['define'];
 
 // 数组
 export interface DataTemplatePropertyArray extends DataTemplatePropertyBase {
   define: {
-    type: "array";
+    type: 'array';
     arrayInfo:
       | DataTemplatePropertyArrayStruct
       | DataTemplatePropertyArrayInt
@@ -186,59 +186,59 @@ export interface DataTemplateEvent {
   id: string;
   name: string;
   desc: string;
-  type: "alert" | "info" | "fault";
+  type: 'alert' | 'info' | 'fault';
   required: boolean;
-  params: Omit<BaseDataTemplateProperty, "required" | "mode">[];
+  params: Omit<BaseDataTemplateProperty, 'required' | 'mode'>[];
 }
 
 export interface DataTemplateAction {
   id: string;
   name: string;
   desc: string;
-  input: Omit<BaseDataTemplateProperty, "required" | "mode" | "desc">[];
-  output: Omit<BaseDataTemplateProperty, "required" | "mode" | "desc">[];
+  input: Omit<BaseDataTemplateProperty, 'required' | 'mode' | 'desc'>[];
+  output: Omit<BaseDataTemplateProperty, 'required' | 'mode' | 'desc'>[];
 }
 
-export const getDefaultValueOfPropertyDefine = (define: DataTemplateProperty["define"] | TemplateSpecDefine["dataType"]) => {
+export const getDefaultValueOfPropertyDefine = (define: DataTemplateProperty['define'] | TemplateSpecDefine['dataType']) => {
   switch (define.type) {
-    case "int":
-    case "float":
-      return typeof define.start === "string" ? Number(define.start) : 0;
-    case "string":
-      return "";
-    case "bool":
+    case 'int':
+    case 'float':
+      return typeof define.start === 'string' ? Number(define.start) : 0;
+    case 'string':
+      return '';
+    case 'bool':
       return 0;
-    case "enum":
+    case 'enum':
       return Number(Object.keys(define.mapping)[0]);
-    case "stringenum":
+    case 'stringenum':
       return Object.keys(define.mapping)[0];
-    case "struct":
+    case 'struct':
       return {};
-    case "array":
+    case 'array':
       return [];
-    case "timestamp":
+    case 'timestamp':
       return 0;
     default:
       return null;
   }
 };
 
-type ValueValidatorFn = (value: unknown, define: DataTemplateProperty["define"] | TemplateSpecDefine["dataType"]) => boolean;
+type ValueValidatorFn = (value: unknown, define: DataTemplateProperty['define'] | TemplateSpecDefine['dataType']) => boolean;
 
 const valueValidatorMap: Record<TemplateDataType, ValueValidatorFn> = {
   bool: (value) => value === 1 || value === 0,
   int: (value) => Number.isSafeInteger(value),
-  float: (value) => typeof value === "number" && !isNaN(value),
-  string: (value) => typeof value === "string",
+  float: (value) => typeof value === 'number' && !isNaN(value),
+  string: (value) => typeof value === 'string',
   enum: (value) => Number.isSafeInteger(value),
-  stringenum: (value) => typeof value === "string",
+  stringenum: (value) => typeof value === 'string',
   timestamp: (value) => Number.isSafeInteger(value),
-  struct: (value) => !!value && typeof value === "object",
+  struct: (value) => !!value && typeof value === 'object',
   array: (value) => Array.isArray(value),
 };
 
 export const normalizeDataByTemplate = (data: Record<string, unknown>, propertyList: DataTemplateProperty[]) => {
-  const normalizeValue = (originalValue: unknown, define: DataTemplateProperty["define"] | TemplateSpecDefine["dataType"]) => {
+  const normalizeValue = (originalValue: unknown, define: DataTemplateProperty['define'] | TemplateSpecDefine['dataType']) => {
     let finalValue = originalValue;
     const applyDefaultValue = () => {
       finalValue = getDefaultValueOfPropertyDefine(define);      
@@ -253,14 +253,14 @@ export const normalizeDataByTemplate = (data: Record<string, unknown>, propertyL
       applyDefaultValue();
     }
 
-    if (define.type === "struct") {
+    if (define.type === 'struct') {
       const structValue = <Record<string, unknown>>finalValue;
       define.specs.forEach((spec) => {
         structValue[spec.id] = normalizeValue(structValue[spec.id], spec.dataType);
       });
     }
 
-    if (define.type === "array") {
+    if (define.type === 'array') {
       const arrayValue = <unknown[]>finalValue;
       finalValue = arrayValue.map(item => normalizeValue(item, define.arrayInfo));
     }

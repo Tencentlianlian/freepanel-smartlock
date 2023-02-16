@@ -1,0 +1,47 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "globals": {
+    "App": true,
+    "getCurrentPages": true,
+    "getApp": true,
+    "APP_KEY": true,
+    "WS_URL": true,
+    "wx": true,
+    "DEFAULT_UIN": true,
+    "CLOUD_FN_ENV": true,
+    "requirePlugin": true
+  },
+  "rules": {
+    "no-mixed-operators": [
+      "error",
+      {
+        "groups": [
+          ["%", "**"],
+          ["%", "+"],
+          ["%", "-"],
+          ["%", "*"],
+          ["%", "/"],
+          ["&", "|", "<<", ">>", ">>>"],
+          ["==", "!=", "===", "!=="],
+          ["&&", "||"],
+          ["*", "/"]
+        ],
+        "allowSamePrecedence": false
+      }
+    ],
+    "no-extra-boolean-cast": 0,
+    "react/prop-types": 0,
+    "@typescript-eslint/ban-ts-ignore": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "camelcase": 0,
+    "new-cap": 0,
+    "@typescript-eslint/quotes": ["error", "single"],
+    "semi": 2,
+    "react/display-name": 0
+  },
+  "parser": "@typescript-eslint/parser"
+}
