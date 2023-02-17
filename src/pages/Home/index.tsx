@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
 import {useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, Dropdown } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button } from 'antd-mobile';
 import dayjs from 'dayjs';
 
 import pwdImg from '../../assets/icon_password.svg';

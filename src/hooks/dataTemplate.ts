@@ -175,10 +175,10 @@ export interface DataTemplatePropertyArray extends DataTemplatePropertyBase {
   define: {
     type: 'array';
     arrayInfo:
-      | DataTemplatePropertyArrayStruct
-      | DataTemplatePropertyArrayInt
-      | DataTemplatePropertyArrayFloat
-      | DataTemplatePropertyArrayString;
+    DataTemplatePropertyArrayStruct
+    | DataTemplatePropertyArrayInt
+    | DataTemplatePropertyArrayFloat
+    | DataTemplatePropertyArrayString;
   };
 }
 
