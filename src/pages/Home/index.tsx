@@ -6,7 +6,7 @@ import {useDeviceInfo} from '../../hooks/useDeviceData';
 import pwdImg from '../../assets/icon_password.svg';
 
 export function Home() {
-  const [{deviceData, deviceStatus}] = useDeviceInfo();
+  const [{deviceData}] = useDeviceInfo();
   const isUnlock = deviceData.lock_motor_state === 1;
   console.log('deviceData', deviceData);
   return <div className={classNames('page home-page', {unlock: isUnlock})}>
@@ -39,5 +39,5 @@ export function Home() {
         <div className="card-btn-title">实时画面</div>
       </Card>
     </div>
-  </div>
+  </div>;
 }
