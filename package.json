@@ -22,6 +22,7 @@
     "@types/react-dom": "^16.9.4",
     "antd-mobile": "^5.28.0",
     "classnames": "^2.2.6",
+    "dayjs": "^1.11.7",
     "qcloud-iotexplorer-h5-panel-sdk": "^1.2.8",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",

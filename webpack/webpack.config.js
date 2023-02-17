@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
@@ -48,6 +49,7 @@ module.exports = (env, argv) => {
       disableHostCheck: true, //  新增该配置项
       hot: false,
       liveReload: false,
+      overlay: true,
       headers: {
         'access-control-allow-origin': '*'
       },
