@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Home, Password } from './pages';
+import { Home, Password, Setting, User } from './pages';
 import 'qcloud-iot-panel-component/lib/index.css';
 
 import {
@@ -16,6 +16,14 @@ const router = createHashRouter([
   {
     path: '/password',
     element: <Password />,
+  },
+  {
+    path: '/setting',
+    element: <Setting />,
+  },
+  {
+    path: '/user',
+    element: <User />,
   },
 ]);
 
