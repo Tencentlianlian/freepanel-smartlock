@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@components/*": ["src/components/*"]
+    },
     "lib": [
       "dom",
       "dom.iterable",
@@ -20,5 +25,5 @@
     "noEmit": true,
     "jsx": "react-jsx",
   },
-  "include": ["src"]
+  "include": ["src"],
 }

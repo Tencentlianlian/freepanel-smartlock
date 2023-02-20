@@ -125,6 +125,10 @@ module.exports = (env, argv) => {
     resolve: {
       // 添加 jsx 后缀支持
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      alias: {
+        '@src': path.resolve(__dirname, '..src'),
+        '@components': path.resolve(__dirname, '../src/components'),
+      },
     },
     devtool: isDevMode ? 'inline-source-map' : false,
     optimization: enableCodeSplitting && !isDevMode ?

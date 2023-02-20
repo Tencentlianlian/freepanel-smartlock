@@ -5,6 +5,7 @@ import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
 import {useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { FloatingPanel, DatePicker, Button, Popup } from 'antd-mobile';
+import { Log } from './components/Log';
 import dayjs from 'dayjs';
 
 import pwdImg from '../../assets/icon_password.svg';
@@ -19,7 +20,10 @@ export function Home() {
   const [notifyTipShow, setNotifyTipShow] = useState(false); 
   const [pickerVisible, setPickerVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
-  const offline = useOffline();
+  const offline = useOffline({
+    checkForceOnline: true,
+    showTip: false
+  });
   const disabledRef = useRef(false);
   const videoDeviceId = sdk.deviceId;
 
@@ -209,6 +213,8 @@ export function Home() {
           }}
         />
       </div>
+
+      <Log date={logDate}/>
     </FloatingPanel>
   </div>;
 }
