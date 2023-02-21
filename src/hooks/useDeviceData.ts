@@ -2,7 +2,7 @@ import { useReducer } from 'react';
 import { DataTemplateProperty, normalizeDataByTemplate } from './dataTemplate';
 
 interface DeviceDataState {
-  deviceData: Record<string, unknown>;
+  deviceData: Record<string, any>;
   deviceStatus: number;
   propertyMap: Record<string, DataTemplateProperty>;
   eventMap: Record<string, any>;

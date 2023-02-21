@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, Btn, Cell } from 'qcloud-iot-panel-component';
+import { useNavigate } from 'react-router-dom';
 import { useDeviceInfo } from '@src/hooks';
 import './index.less';
 
-import UserIcon from '@src/assets/user.svg';
+import { UserIcon } from '../components/UserIcon';
 
 interface User{
   name: string;
@@ -12,7 +13,7 @@ interface User{
 }
 
 export function UserList() {
-  const sdk = window.h5PanelSdk;
+  const navigate = useNavigate();
   const [{ deviceData }] = useDeviceInfo();
   console.log(deviceData);
   const { users = [] } = deviceData;
@@ -20,19 +21,15 @@ export function UserList() {
     { (users as User[]).map((user, index) => {
       return (
         <Cell key={index} className="user-card"
-          icon={<img src={UserIcon} alt="" className="user-icon" />}
+          icon={<UserIcon />}
           title={user.name}
           subTitle={122345}
+          onClick={() => navigate(`/user/edit/${user.userid}`)}
         ></Cell>
-        // <Card>
-        //   <img src={UserIcon} alt="" className="user-icon" />
-        //   <div>
-        //     <div className="card-title">{user.name}</div>
-        //     <div className="card-content"></div>
-        //   </div>
-        // </Card>
       );
     })}
-    <Btn type='primary'>添加用户</Btn>
+    <Btn type='primary'
+      onClick={() => navigate('/user/add')}
+    >添加用户</Btn>
   </div>;
 }
