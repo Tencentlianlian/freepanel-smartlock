@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import './index.less';
 
 interface TimeLineItem {
-  title: string;
-  content: string;
-  status: string;
+  title: ReactNode;
+  content: ReactNode;
+  status: 'info' | 'alert';
 }
 
 interface TimelineProps {
@@ -13,7 +13,8 @@ interface TimelineProps {
   footer?: ReactNode | ((item: TimeLineItem) => ReactNode)
 }
 
-export function Timeline({items = [], footer}: TimelineProps) {
+export function Timeline({ items = [], footer }: TimelineProps) {
+  console.log({items});
   return <div className="iotp-timeline">
     {items.map((item, index) => {
       return (

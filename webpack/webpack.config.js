@@ -126,7 +126,7 @@ module.exports = (env, argv) => {
       // 添加 jsx 后缀支持
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
       alias: {
-        '@src': path.resolve(__dirname, '..src'),
+        '@src': path.resolve(__dirname, '../src'),
         '@components': path.resolve(__dirname, '../src/components'),
       },
     },

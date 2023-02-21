@@ -37,6 +37,7 @@
     "react/prop-types": 0,
     "@typescript-eslint/ban-ts-ignore": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/object-curly-spacing": ["error", "always"],
     "camelcase": 0,
     "new-cap": 0,
     "@typescript-eslint/quotes": ["error", "single"],

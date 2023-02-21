@@ -5,7 +5,9 @@ interface DeviceDataState {
   deviceData: Record<string, unknown>;
   deviceStatus: number;
   propertyMap: Record<string, DataTemplateProperty>;
+  eventMap: Record<string, any>;
   propertyList: DataTemplateProperty[];
+  eventList: any[];
 }
 
 function reducer(state: DeviceDataState, action: {
@@ -40,14 +42,21 @@ function reducer(state: DeviceDataState, action: {
 function initState(sdk: any) {
   const propertyMap = <Record<string, DataTemplateProperty>>{};
   const propertyList = <DataTemplateProperty[]>sdk.dataTemplate.properties;
+  const eventMap = <Record<string, any>>{};
+  const eventList = <DataTemplateProperty[]>sdk.dataTemplate.events;
 
   propertyList.forEach((item: DataTemplateProperty) => {
     propertyMap[item.id] = item;
+  });
+  eventList.forEach((item: any) => {
+    eventMap[item.id] = item;
   });
 
   return {
     propertyMap: propertyMap,
     propertyList: propertyList,
+    eventMap,
+    eventList: eventList,
     deviceData: normalizeDataByTemplate(<Record<string, unknown>>sdk.deviceData, propertyList),
     deviceStatus: <number>sdk.deviceStatus,
   };
