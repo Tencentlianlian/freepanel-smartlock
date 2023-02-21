@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
-import {useDeviceInfo, useOffline } from '../../hooks';
+import { useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, Popup } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button, ActionSheet } from 'antd-mobile';
 import { Log } from './components/Log';
 import dayjs from 'dayjs';
 
@@ -12,14 +12,24 @@ import pwdImg from '../../assets/icon_password.svg';
 import lockImg from '../../assets/unlock.svg';
 import liveImg from '../../assets/live.svg';
 
+
+const actions = [
+  { text: '全部事件', key: 'all' },
+  { text: '门铃呼叫', key: 'doorbell' },
+  { text: '告警信息', key: 'alarm_lock' },
+];
+
 export function Home() {
   const sdk = window.h5PanelSdk;
-  const [{deviceData}] = useDeviceInfo();
+  const [{ deviceData }] = useDeviceInfo();
   const isUnlock = deviceData.lock_motor_state === 1;
   const navigate = useNavigate();
   const [notifyTipShow, setNotifyTipShow] = useState(false); 
   const [pickerVisible, setPickerVisible] = useState(false);
+  // actionSheet visible
+  const [visible, setVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
+  const [logType, setLogType] = useState('all');
   const offline = useOffline({
     checkForceOnline: true,
     showTip: false
@@ -188,7 +198,10 @@ export function Home() {
 
     <FloatingPanel anchors={[0.3 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}>
       <div className="log-menu">
-        <div className="log-type">全部事件
+        <div className="log-type"
+          onClick={() => setVisible(true)}
+        >
+          {actions.find(action => action.key === logType)?.text}
           <Icon icon="arrow-down" theme="ios" color="#ccc"
             size={16}
           />
@@ -212,9 +225,19 @@ export function Home() {
             setLogDate(val);
           }}
         />
+        <ActionSheet
+          actions={actions}
+          onAction={(action) => {
+            setLogType(action.key as string);
+            setVisible(false);
+          }}
+          cancelText='取消'
+          visible={visible}
+          onClose={() => setVisible(false)}
+        />
       </div>
 
-      <Log date={logDate}/>
+      <Log date={logDate} logType={logType}/>
     </FloatingPanel>
   </div>;
 }

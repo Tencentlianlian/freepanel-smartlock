@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Home, Password, Setting, User } from './pages';
+import { Home, Password, Setting } from './pages';
+import { UserList } from './pages/User/UserList';
 import 'qcloud-iot-panel-component/lib/index.css';
 
 import {
   createHashRouter,
   RouterProvider,
 } from 'react-router-dom';
-
+import { routeChildren } from './pages/User';
 const router = createHashRouter([
   {
     path: '/',
@@ -23,7 +24,8 @@ const router = createHashRouter([
   },
   {
     path: '/user',
-    element: <User />,
+    element: <UserList />,
+    children: routeChildren
   },
 ]);
 

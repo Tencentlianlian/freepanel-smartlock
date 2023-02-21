@@ -46,9 +46,8 @@ module.exports = (env, argv) => {
       contentBase: distPath,
       compress: true,
       port: 9000,
+      host: '127.0.0.1',
       disableHostCheck: true, //  新增该配置项
-      hot: false,
-      liveReload: false,
       overlay: true,
       headers: {
         'access-control-allow-origin': '*'

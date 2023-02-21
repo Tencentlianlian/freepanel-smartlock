@@ -1,6 +1,13 @@
-import React from 'react';
-import './index.less';
+import  { UserList } from './UserList';
+import  { UserAdd } from './UserAdd';
 
-export function User() {
-  return <div>user</div>;
-}
+export const routeChildren = [
+  {
+    path: 'list',
+    element: <UserList />
+  },
+  {
+    path: 'add',
+    element: <UserAdd />
+  },
+];
