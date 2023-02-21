@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import classNames from 'classnames';
 import './index.less';
 
 interface TimeLineItem {
@@ -16,8 +17,9 @@ export function Timeline({items = [], footer}: TimelineProps) {
   return <div className="iotp-timeline">
     {items.map((item, index) => {
       return (
-        <div className="iotp-timeline-item" key={index}>
-          <div className="timeline-body">
+        <div className={classNames('iotp-timeline-item', item.status)} key={index}>
+          <div className="timeline-item-dot"></div>
+          <div className="timeline-item-body">
             <div className="timeline-item-title">{item.title}</div>
             <div className="timeline-item-content">{item.content}</div>
           </div>

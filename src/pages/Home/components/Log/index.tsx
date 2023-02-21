@@ -6,7 +6,11 @@ export function Log({date}) {
     <Timeline items={[{
       title: '123',
       content: 'weee',
-      status: '222'
+      status: 'info'
+    },{
+      title: '234',
+      content: 'weee',
+      status: 'warning'
     }]}/>
   );
 }
