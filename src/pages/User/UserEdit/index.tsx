@@ -64,19 +64,19 @@ export function UserEdit() {
           </div>
           <div className="pwd-name">指纹</div>
         </div>
-        <div className="pwd-item">
+        <div className="pwd-item" onClick={() => addUserPwd('pwd')}>
           <div className="pwd-icon">
             <img src={PwdImg} alt="" />
           </div>
           <div className="pwd-name">数字密码</div>
         </div>
-        <div className="pwd-item">
+        <div className="pwd-item" onClick={() => addUserPwd('card')}>
           <div className="pwd-icon">
             <img src={CardImg} alt="" />
           </div>
           <div className="pwd-name">卡片</div>
         </div>
-        <div className="pwd-item">
+        <div className="pwd-item" onClick={() => addUserPwd('face')}>
           <div className="pwd-icon">
             <img src={FaceImg} alt="" />
           </div>

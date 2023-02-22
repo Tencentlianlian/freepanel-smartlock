@@ -30,6 +30,7 @@ export function UserList() {
     })}
     <Btn type='primary'
       onClick={() => navigate('/user/add')}
+      icon="add"
     >添加用户</Btn>
   </div>;
 }
