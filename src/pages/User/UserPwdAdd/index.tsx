@@ -2,5 +2,5 @@ import React from 'react';
 import './index.less';
 
 export function UserPwdAdd() {
-  return <div>UserEdit</div>;
+  return <div>添加password</div>;
 }

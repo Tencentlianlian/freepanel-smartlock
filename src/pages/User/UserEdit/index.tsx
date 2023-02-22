@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDeviceInfo } from '@src/hooks';
 import { Cell, Btn } from 'qcloud-iot-panel-component';
 import { UserIcon } from '../components/UserIcon';
@@ -9,11 +9,14 @@ import './index.less';
 
 export function UserEdit() {
   const params = useParams();
+  const navigate = useNavigate();
   const [popupVisible, setPopupVisible] = useState(false);
-  console.log({ params });
   const [{ deviceData }] = useDeviceInfo();
   const user = deviceData.users.find(user => user.userid === params.id);
-  console.log({ user });
+  const addUserPwd = (type: string) => {
+    navigate(`/user/password-add?userid=${user.userid}&type=${type}`);
+  }
+
   return <div className='page user-edit'>
     <Cell
       icon={<UserIcon/>}
@@ -55,7 +58,7 @@ export function UserEdit() {
         请选择添加的密码类型
       </div>
       <div className="pwd-list">
-        <div className="pwd-item">
+        <div className="pwd-item" onClick={() => addUserPwd('finger')}>
           <div className="pwd-icon">
             <img src={FingerImg} alt="" />
           </div>
@@ -65,7 +68,7 @@ export function UserEdit() {
           <div className="pwd-icon">
             <img src={PwdImg} alt="" />
           </div>
-          <div className="pwd-name">密码</div>
+          <div className="pwd-name">数字密码</div>
         </div>
         <div className="pwd-item">
           <div className="pwd-icon">
@@ -77,7 +80,7 @@ export function UserEdit() {
           <div className="pwd-icon">
             <img src={FaceImg} alt="" />
           </div>
-          <div className="pwd-name">人脸</div>
+          <div className="pwd-name">面部</div>
         </div>
       </div>
     </Popup>
