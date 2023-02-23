@@ -1,4 +1,4 @@
-import { useDeviceInfo } from '@hooks/useDeviceInfo';
+import { useDeviceInfo } from './useDeviceData';
 const sdk = window.h5PanelSdk;
 type Auth = {
   name?: string;
@@ -26,13 +26,13 @@ interface UserInfo {
 type UserResult = [
   { userInfo: UserInfo, userIndex: number },
   {
-    deleteUser: () => Promise<void>,
-    editUser: (userInfo: Partial<UserInfo>, index?: number) => Promise<void>,
+    deleteUser: (userid) => Promise<void>,
+    editUser: (userInfo: UserInfo, index?: number) => Promise<void>,
   }
 ];
 
 export const useUser = ({ id, name }: { id: string, name?: string }): UserResult => {
-  const [{ deviceData }, { doControlDeviceData }] = useDeviceInfo();
+  const [{ deviceData }] = useDeviceInfo();
   const {
     users = [],
     fingerprints = [],
@@ -53,8 +53,6 @@ export const useUser = ({ id, name }: { id: string, name?: string }): UserResult
 
   const deleteUser = async (userid) => {
     await sdk.callDeviceAction({ userid }, 'delete_user');
-    // users.splice(index, 1);
-    // await doControlDeviceData('users', users);
   };
 
   const editUser = async (userInfo: UserInfo, index = userIndex) => {
@@ -62,8 +60,6 @@ export const useUser = ({ id, name }: { id: string, name?: string }): UserResult
       ...userInfo,
       effectiveTime: userInfo.effectiveTime || '',
     }, 'edit_user');
-    // const newUsers = [...users.slice(0, index), userInfo, ...users.slice(index + 1)];
-    // await doControlDeviceData('users', newUsers);
   };
   return [{ userInfo: userData, userIndex }, { deleteUser, editUser }];
 };
