@@ -33,7 +33,8 @@ export function UserEdit() {
       }}
       showArrow
     />
-    <Cell.Group title="指纹识别">
+
+    {userInfo.fingerprints.length > 0 && <Cell.Group title="指纹识别" className='pwd-group'>
       {
         userInfo.fingerprints.map(({ id: key }, index) => {
           return <Cell
@@ -47,8 +48,8 @@ export function UserEdit() {
           />;
         })
       }
-    </Cell.Group>
-    <Cell.Group title="卡片">
+    </Cell.Group>}
+    {userInfo.cards.length > 0 && <Cell.Group title="卡片" className='pwd-group'>
       {
         userInfo.cards.map(({ id: key }, index) => {
           return <Cell
@@ -61,8 +62,8 @@ export function UserEdit() {
           />;
         })
       }
-    </Cell.Group>
-    <Cell.Group title="面部识别">
+    </Cell.Group>}
+    {userInfo.faces.length > 0 && <Cell.Group title="面部识别" className='pwd-group'>
       {
         userInfo.faces.map(({ id: key }, index) => {
           return <Cell
@@ -75,8 +76,8 @@ export function UserEdit() {
           />;
         })
       }
-    </Cell.Group>
-    <Cell.Group title="数字密码">
+    </Cell.Group>}
+    {userInfo.passwords.length > 0 && <Cell.Group title="数字密码" className='pwd-group'>
       {
         userInfo.passwords.map(({ id: key }, index) => {
           return <Cell
@@ -89,7 +90,7 @@ export function UserEdit() {
           />;
         })
       }
-    </Cell.Group>
+    </Cell.Group>}
 
     <Btn type="primary" icon="add"
       style={{
