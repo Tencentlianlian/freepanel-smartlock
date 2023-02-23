@@ -37,6 +37,7 @@ export function UserAdd() {
         Object.keys(actionMap).map((key) => (
           <Card key={key}
             className="pwd-card"
+            onClick={() => addUserPwd(key)}
           >
             <img src={iconMap[key]} alt="" />
             <div className="name">{nameMap[key]}</div>
