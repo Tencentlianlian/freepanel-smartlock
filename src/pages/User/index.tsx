@@ -2,6 +2,7 @@ import  { UserList } from './UserList';
 import  { UserAdd } from './UserAdd';
 import  { UserEdit } from './UserEdit';
 import  { UserPwdAdd } from './UserPwdAdd';
+import  { UserSetting } from './UserSetting';
 
 export const routeChildren = [
   {
@@ -19,5 +20,9 @@ export const routeChildren = [
   {
     path: 'password-add',
     element: <UserPwdAdd />
+  },
+  {
+    path: 'info/:id',
+    element: <UserSetting />
   },
 ];

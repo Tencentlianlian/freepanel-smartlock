@@ -11,12 +11,31 @@ import { useUser } from '@src/hooks/useUser';
 
 export function UserEdit() {
   const params = useParams();
+  const sdk = window.h5PanelSdk;
   const navigate = useNavigate();
   const [popupVisible, setPopupVisible] = useState(false);
   const [{ deviceData }] = useDeviceInfo();
   const [{ userInfo }] = useUser({ id: params.id as string });
   const addUserPwd = (type: string) => {
     navigate(`/user/password-add?userid=${userInfo.userid}&type=${type}`);
+  };
+
+  const removeAuth = async (id, type: 'face' | 'password' | 'card' | 'fingerprint') => {
+    const isDelete = await sdk.tips.confirm('确认删除?');
+    if (!isDelete) return;
+
+    try {
+      const res = await sdk.callDeviceAction({ id }, `delete_${type}`);
+      console.log('正在删除', res);
+      if (JSON.parse(res.OutputParams || '{}').result !== 1) {
+        throw new Error('删除失败, 请重试');
+      } else {
+        sdk.tips.showInfo('删除成功');
+      }
+    } catch (err) {
+      console.warn(err);
+      sdk.tips.showError('删除失败');
+    }
   };
 
 
@@ -31,6 +50,7 @@ export function UserEdit() {
         background: 'transparent',
         paddingBottom: 20,
       }}
+      onClick={() => navigate(`/user/info/${userInfo.userid}`)}
       showArrow
     />
 
@@ -38,12 +58,9 @@ export function UserEdit() {
       {
         userInfo.fingerprints.map(({ id: key }, index) => {
           return <Cell
-            key={key}
+            key={index}
             title={`指纹${index + 1}`}
-            subTitle={'用户的权限时间'}
-            style={{
-              background: 'transparent',
-            }}
+            onClick={() => removeAuth(key, 'fingerprint')}
             footer={deleteIcon}
           />;
         })
@@ -53,11 +70,9 @@ export function UserEdit() {
       {
         userInfo.cards.map(({ id: key }, index) => {
           return <Cell
-            key={key}
+            key={index}
             title={`卡片${index + 1}`}
-            style={{
-              background: 'transparent',
-            }}
+            onClick={() => removeAuth(key, 'card')}
             footer={deleteIcon}
           />;
         })
@@ -67,11 +82,9 @@ export function UserEdit() {
       {
         userInfo.faces.map(({ id: key }, index) => {
           return <Cell
-            key={key}
+            key={index}
             title={`面容ID${index + 1}`}
-            style={{
-              background: 'transparent',
-            }}
+            onClick={() => removeAuth(key, 'face')}
             footer={deleteIcon}
           />;
         })
@@ -81,11 +94,9 @@ export function UserEdit() {
       {
         userInfo.passwords.map(({ id: key }, index) => {
           return <Cell
-            key={key}
+            key={index}
             title={`密码${index + 1}`}
-            style={{
-              background: 'transparent',
-            }}
+            onClick={() => removeAuth(key, 'password')}
             footer={deleteIcon}
           />;
         })
