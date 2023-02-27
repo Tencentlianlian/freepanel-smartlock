@@ -33,7 +33,7 @@ interface Log{
 
 export function Log({ date, logType }) {
   const [data, setData] = useState<LogItem[]>([]);
-  const [{ eventMap: dataTemplateEventMap }] = useDeviceInfo();
+  const [{ templateMap: dataTemplateEventMap }] = useDeviceInfo();
   const alarmTipMap = dataTemplateEventMap.alarm_lock.params[0].define.mapping;
   const sdk = window.h5PanelSdk;
   const [isLoaded, setLoaded] = useState(false);

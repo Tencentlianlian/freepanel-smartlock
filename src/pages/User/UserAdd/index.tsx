@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Cell, Card } from 'qcloud-iot-panel-component';
 import { UserIcon } from '../components/UserIcon';
+import { useUser } from '@src/hooks/useUser';
 import { nanoid } from 'nanoid';
 import './index.less';
 import { actionMap, iconMap, nameMap } from '../utils';
 
+interface NewUser {
+  name: string;
+  userid: string;
+  effectiveTime?: any; 
+}
+
 export function UserAdd() {
-  const params = useParams();
+  const [search] = useSearchParams();
   const navigate = useNavigate();
-  const user = {
-    name: '新用户',
-    userid: nanoid()
-  };
+  const userid = search.get('userid') as string;
+  const [{ userInfo: user }] = useUser({ id: userid });
 
   const addUserPwd = (type: string) => {
     navigate(`/user/password-add?userid=${user.userid}&type=${type}`);
@@ -22,7 +27,7 @@ export function UserAdd() {
     <Cell
       icon={<UserIcon/>}
       title={user.name}
-      subTitle={'用户的权限时间'}
+      subTitle={user.effectiveTime ? '用户的权限时间' : '无有效时间限制'}
       style={{
         background: 'transparent',
         paddingTop: 20

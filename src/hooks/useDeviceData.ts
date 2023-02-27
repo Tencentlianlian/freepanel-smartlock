@@ -6,6 +6,7 @@ export interface UseDeviceInfoState {
   productInfo: any;
   templateMap: any;
   deviceData: any;
+  eventMap: Record<string, any>;
   statusTip?: { status: 'error' | 'loading' | 'empty' } | null;
 }
 
@@ -87,13 +88,14 @@ function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
 }
 
 // 初始化sdk状态
-function initState(sdk, online): UseDeviceInfoState {
+function initState(sdk, online = true): UseDeviceInfoState {
   const { deviceInfo, productInfo, dataTemplate, deviceData, deviceStatus } = sdk;
 
   const result = {
     deviceInfo,
     productInfo,
     templateMap: {},
+    eventMap: {},
     deviceData,
     statusTip: null,
   };
@@ -102,26 +104,22 @@ function initState(sdk, online): UseDeviceInfoState {
     if (dataTemplate[key] && dataTemplate[key].length) {
       dataTemplate[key].forEach((item) => {
         result.templateMap[item.id] = item;
+        if (key === 'events') {
+          result.eventMap[item.id] = item;
+        }
       });
     }
   });
 
   result.deviceInfo.Status = online !== undefined ? online : deviceStatus;
   result.deviceInfo.isVirtualDevice = deviceInfo.DeviceName === '~virtualDev';
-
   return result;
 }
 
 export const useDeviceInfo = (): UseDeviceInfoResult => {
   // id 为key，设置 setTimeout 避免连续操作
   const controlDeviceDataDebounceMap = useRef({});
-  const [state, dispatch] = useReducer<Reducer<UseDeviceInfoState, ReducerAction<any>>>(reducer, {
-    deviceInfo: {},
-    productInfo: {},
-    templateMap: {},
-    deviceData: sdk.deviceData || {},
-    statusTip: { status: 'loading' },
-  });
+  const [state, dispatch] = useReducer<Reducer<UseDeviceInfoState, ReducerAction<any>>>(reducer, initState(sdk));
 
   const controlDeviceData = async (deviceData) => {
     try {

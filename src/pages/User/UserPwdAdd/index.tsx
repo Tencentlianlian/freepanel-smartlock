@@ -7,6 +7,7 @@ import { iconMap, deviceNameMap, actionMap, actionNameMap } from '../utils';
 
 import SuccessImg from '@src/assets/success.svg';
 import FailImg from '@src/assets/failed.svg';
+import { useUser } from '@src/hooks/useUser';
 
 // 0 添加中 1 添加成功 2 添加失败
 type Status = 0 | 1 | 2;
@@ -18,6 +19,7 @@ export function UserPwdAdd() {
   const type = search.get('type') as string;
   const sdk = window.h5PanelSdk;
   const navigate = useNavigate();
+  const [{ userInfo }] = useUser({ id: userid as  string });
   console.log({ userid, type });
 
   const cancel = async () => {
@@ -55,7 +57,7 @@ export function UserPwdAdd() {
       <div className="status-info">
         <img src={SuccessImg} alt="" />
         <div className="status-title">添加成功</div>
-        <div className="user-name">用户: </div>
+        <div className="user-name">用户: {userInfo.name}</div>
       </div>
       <Btn type='primary'
         onClick={cancel}
@@ -68,7 +70,7 @@ export function UserPwdAdd() {
       <div className="status-info">
         <img src={FailImg} alt="" />
         <div className="status-title">添加失败</div>
-        <div className="user-name">用户: </div>
+        <div className="user-name">用户: {userInfo.name}</div>
       </div>
       <Btn type='primary'
         onClick={cancel}
