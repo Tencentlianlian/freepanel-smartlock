@@ -14,7 +14,6 @@ interface TimelineProps {
 }
 
 export function Timeline({ items = [], footer }: TimelineProps) {
-  console.log({items});
   return <div className="iotp-timeline">
     {items.map((item, index) => {
       return (

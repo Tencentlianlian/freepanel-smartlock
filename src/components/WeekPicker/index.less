@@ -1,0 +1,36 @@
+.iotp-picker{
+  &-hd{
+    display: flex;
+    padding: 12px 24px;
+    font-size: 14px;
+    &-title{
+      flex: 1;
+      text-align: center;
+    }
+  }
+  &-bd{
+    padding: 24px;
+  }
+  &-opt{
+    border-radius: 8px;
+    opacity: 1;
+    border: 0 solid #e5e5e5;
+    padding: 14px 20px;
+    background: #f3f3f5;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &-icon{
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    opacity: 1;
+    border: 1px solid #a1a7b2;
+    &.checked{
+      background-image: url(../../assets/checked.svg);
+      border: 1px solid #f3f3f5;
+    }
+  }
+}

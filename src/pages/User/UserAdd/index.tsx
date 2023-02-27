@@ -3,15 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Cell, Card } from 'qcloud-iot-panel-component';
 import { UserIcon } from '../components/UserIcon';
 import { useUser } from '@src/hooks/useUser';
-import { nanoid } from 'nanoid';
 import './index.less';
 import { actionMap, iconMap, nameMap } from '../utils';
-
-interface NewUser {
-  name: string;
-  userid: string;
-  effectiveTime?: any; 
-}
 
 export function UserAdd() {
   const [search] = useSearchParams();
