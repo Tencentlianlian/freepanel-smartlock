@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Cell, Card } from 'qcloud-iot-panel-component';
 import { UserIcon } from '../components/UserIcon';
-import { useUser } from '@src/hooks/useUser';
+import { useUser, getEffectiveTime } from '@src/hooks/useUser';
 import './index.less';
 import { actionMap, iconMap, nameMap } from '../utils';
 
@@ -16,11 +16,13 @@ export function UserAdd() {
     navigate(`/user/password-add?userid=${user.userid}&type=${type}`);
   };
 
+
+
   return <div className='page user-add'>
     <Cell
       icon={<UserIcon/>}
       title={user.name}
-      subTitle={user.effectiveTime ? '用户的权限时间' : '无有效时间限制'}
+      subTitle={user.effectiveTime ? getEffectiveTime(user.effectiveTime) : '无有效时间限制'}
       style={{
         background: 'transparent',
         paddingTop: 20

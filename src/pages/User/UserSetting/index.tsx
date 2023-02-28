@@ -4,23 +4,34 @@ import { useUser } from '@src/hooks/useUser';
 import { Picker, DatePicker } from 'antd-mobile';
 import { WeekPicker } from '@src/components/WeekPicker';
 import { TimeSpanPicker } from '@src/components/TimeSpanPicker';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import './index.less';
 
 export function UserSetting() {
   const { id } = useParams();
-  const [{ userInfo }] = useUser({ id: id as string });
+  const [{ userInfo }, { editUser }] = useUser({ id: id as string });
   const { effectiveTime } = userInfo;
   const [eTime, setETime] = useState(effectiveTime);
   const [beginVisible, setBeginVisible] = useState(false);
   const [endVisible, setEndVisible] = useState(false);
   const [typeVisible, setTypeVisible] = useState(false);
   const [weekVisible, setWeekVisible] = useState(false);
-  const [timespanVisible, setTimespanVisible] = useState(true);
+  const [timespanVisible, setTimespanVisible] = useState(false);
   const weeks = '周一 周二 周三 周四 周五 周六 周日'.split(' ');
 
   const types = ['永久有效', '周期有效'];
+
+  useEffect(() => {
+    editUser({
+      userid: userInfo.userid,
+      name: userInfo.name,
+      effectiveTime: eTime
+    }).catch(err => {
+      console.warn('编辑失败', err);
+      window.h5PanelSdk.tips.showError('保存失败');
+    });
+  }, [eTime]);
   return <div className='page user-setting'>
     <Cell
       title="用户名称"
@@ -51,7 +62,7 @@ export function UserSetting() {
         ></Cell>
         <Cell
           title="有效时间段"
-          footer={`${eTime.beginTime}~${eTime.endTime}`}
+          footer={eTime.beginTime && eTime.endTime ? `${eTime.beginTime}~${eTime.endTime}` : ''}
           showArrow
           onClick={() => setTimespanVisible(true)}
         ></Cell>
@@ -69,7 +80,6 @@ export function UserSetting() {
       visible={typeVisible}
       onCancel={() => setTypeVisible(false)}
       onConfirm={(val) => {
-        console.log(val);
         setETime({ ...eTime, type: types.indexOf(val[0] as string) as 0 | 1 });
         setTypeVisible(false);
       }}
@@ -88,6 +98,7 @@ export function UserSetting() {
     <DatePicker
       value={new Date(eTime.endDate) || new Date}
       title="结束日期"
+      min={new Date(eTime.beginDate)}
       visible={endVisible}
       onCancel={() => setEndVisible(false)}
       onConfirm={(val) => {
@@ -108,6 +119,7 @@ export function UserSetting() {
     />
     <TimeSpanPicker
       value={[eTime.beginTime, eTime.endTime]}
+      title="有效时间段"
       onChange={(value) => {
         setTimespanVisible(false);
         setETime({

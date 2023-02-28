@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useLoadMore } from '@src/hooks/useLoadMore';
 import { InfiniteScroll } from 'antd-mobile';
 import { useDeviceInfo } from '@src/hooks';
+
 import dayjs from 'dayjs';
 
 const eventMap: Record<string, string> = {
@@ -47,7 +48,6 @@ export function Log({ date, logType }) {
       EndTime: Math.floor(+dayjs(date).endOf('day') / 1000),
       Size: 20,
     });
-    console.log('logData', res);
     const logList = res.EventHistory;
     return {
       hasMore: !res.Listover,

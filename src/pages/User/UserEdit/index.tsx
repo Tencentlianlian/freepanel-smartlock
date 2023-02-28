@@ -7,7 +7,7 @@ import { Popup } from 'antd-mobile';
 import { FingerImg, PwdImg, CardImg, FaceImg } from '@src/assets/pwd';
 import DeleteImg from '@src/assets/delete.svg';
 import './index.less';
-import { useUser } from '@src/hooks/useUser';
+import { useUser, getEffectiveTime } from '@src/hooks/useUser';
 
 export function UserEdit() {
   const params = useParams();
@@ -15,7 +15,7 @@ export function UserEdit() {
   const navigate = useNavigate();
   const [popupVisible, setPopupVisible] = useState(false);
   const [{ deviceData }] = useDeviceInfo();
-  const [{ userInfo }] = useUser({ id: params.id as string });
+  const [{ userInfo }, { deleteUser }] = useUser({ id: params.id as string });
   const addUserPwd = (type: string) => {
     navigate(`/user/password-add?userid=${userInfo.userid}&type=${type}`);
   };
@@ -30,7 +30,7 @@ export function UserEdit() {
       if (JSON.parse(res.OutputParams || '{}').result !== 1) {
         throw new Error('删除失败, 请重试');
       } else {
-        sdk.tips.showInfo('删除成功');
+        sdk.tips.showSuccess('删除成功');
       }
     } catch (err) {
       console.warn(err);
@@ -45,7 +45,7 @@ export function UserEdit() {
     <Cell
       icon={<UserIcon/>}
       title={userInfo.name}
-      subTitle={'用户的权限时间'}
+      subTitle={userInfo.effectiveTime ? getEffectiveTime(userInfo.effectiveTime) : '无有效时间限制'}
       style={{
         background: 'transparent',
         paddingBottom: 20,
@@ -103,6 +103,25 @@ export function UserEdit() {
       }
     </Cell.Group>}
 
+    <Btn type="default"
+      style={{
+        marginTop: 20
+      }}
+      onClick={async() => {
+        const isConfirm = await window.h5PanelSdk.tips.confirm('删除用户', '删除用户后，该用户的信息和密码也将被删除', {
+          confirmColor: '#FA5151'
+        });
+        if (isConfirm) {
+          deleteUser(userInfo.userid).then(() => {
+            window.h5PanelSdk.tips.showSuccess('删除成功');
+            navigate(-1);
+          }).catch(err => {
+            window.h5PanelSdk.tips.showError('删除失败');
+            console.warn(err);
+          });
+        }
+      }}
+    >删除用户</Btn>
     <Btn type="primary" icon="add"
       style={{
         marginTop: 20

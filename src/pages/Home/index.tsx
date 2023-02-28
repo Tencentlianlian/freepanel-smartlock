@@ -4,13 +4,15 @@ import classNames from 'classnames';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
 import { useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, ActionSheet } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button, ActionSheet, Toast } from 'antd-mobile';
 import { Log } from './components/Log';
+import { PasswordModal } from './components/PasswordModal';
 import dayjs from 'dayjs';
 
 import pwdImg from '../../assets/icon_password.svg';
 import lockImg from '../../assets/unlock.svg';
 import liveImg from '../../assets/live.svg';
+import loadingImg from '../../assets/loading.svg';
 
 
 const actions = [
@@ -22,7 +24,7 @@ const actions = [
 export function Home() {
   const sdk = window.h5PanelSdk;
   const [{ deviceData }] = useDeviceInfo();
-  const isUnlock = deviceData.lock_motor_state === 1;
+  const isUnlock = deviceData.lock_motor_state === 0;
   const navigate = useNavigate();
   const [notifyTipShow, setNotifyTipShow] = useState(false); 
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -30,12 +32,14 @@ export function Home() {
   const [visible, setVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
+  const [loading, setLoading] = useState(false);
   const offline = useOffline({
     checkForceOnline: true,
     showTip: false
   });
   const disabledRef = useRef(false);
   const videoDeviceId = sdk.deviceId;
+  const [pwdModalVisible, setPwdNodalVisible] = useState(false);
 
 
   const labelRenderer = useCallback((type: string, data: number) => {
@@ -110,6 +114,27 @@ export function Home() {
     }
   };
 
+  const unlock = () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    sdk.callDeviceAction({}, 'unlock_remote')
+      .then((res) => {
+        console.log(res);
+        setLoading(false);
+        Toast.show({
+          icon: 'success',
+          content: '开锁成功',
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log('解锁失败', err);
+        sdk.tips.showError('解锁失败');
+      });
+  };
+
   useEffect(() => {
     if (sdk.deviceStatus === 0) {
       return;
@@ -129,7 +154,7 @@ export function Home() {
     });
   }, []);
 
-  return <div className={classNames('page home-page', {unlock: isUnlock})}>
+  return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
       color='primary'
     >
@@ -157,26 +182,30 @@ export function Home() {
     </span>
 
     <div className="lock-state">
-      <img src=" https://iot.gtimg.com/cdn/ad/shuaisguo/lock+1676455008626.png" alt="" />
+      {isUnlock ? <img src="https://qcloudimg.tencent-cloud.cn/raw/7cdaa6cca5e56aa8f8da32d21e621cf3.png" alt="" /> 
+        : <img src="https://iot.gtimg.com/cdn/ad/shuaisguo/lock+1676455008626.png" alt="" />
+      }
       <div className="battery">
         <Battery value={deviceData.battery_percentage as number} showLabel/>
         <div className="splitor"></div>
-        <div className='lock-label'>{isUnlock ? <span style={{color: '#FA5151'}}>已开锁</span> : '已关锁'}</div>
+        <div className='lock-label'>{isUnlock ? <span style={{ color: '#FA5151' }}>已开锁</span> : '已关锁'}</div>
       </div>
     </div>
 
     <div className="card-list">
       <Card
         className="card-btn"
-        onClick={() => navigate('/password')}
+        onClick={() => setPwdNodalVisible(true)}
       >
         <img src={pwdImg} alt="临时密码" className='card-icon' />
         <div className="card-btn-title">临时密码</div>
       </Card>
       <Card
         className="card-btn"
+        onClick={unlock}
       >
-        <img src={lockImg} alt="点击开锁" className='card-icon' />
+        <img src={loading ? loadingImg : lockImg} alt="点击开锁"
+          className={classNames('card-icon', { loading: loading })} />
         <div className="card-btn-title">点击开锁</div>
       </Card>
       <Card
@@ -196,7 +225,7 @@ export function Home() {
       showArrow
     ></Cell>
 
-    <FloatingPanel anchors={[0.3 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}>
+    <FloatingPanel anchors={[0.1 * window.innerHeight, 0.3 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}>
       <div className="log-menu">
         <div className="log-type"
           onClick={() => setVisible(true)}
@@ -239,5 +268,10 @@ export function Home() {
 
       <Log date={logDate} logType={logType}/>
     </FloatingPanel>
+    <PasswordModal
+      visible={pwdModalVisible}
+      onClose={() => setPwdNodalVisible(false)}
+      onMaskClick={() => setPwdNodalVisible(false)}
+    ></PasswordModal>
   </div>;
 }

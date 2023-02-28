@@ -1,7 +1,10 @@
 .home-page{
   height: 100vh;
-  background-image: url('../../assets/bg2.svg');
-  background-size: cover;
+  &.page{
+    background-image: url('../../assets/bg2.svg');
+    background-size: cover;
+  }
+
   div.notify-tip{
     display: flex;
     background: rgba(255,255,255,0.8);
@@ -35,7 +38,7 @@
       align-items: center;
     }
     >img{
-      width: 160px;
+      // width: 160px;
       height: 160px;
     }
   }
@@ -56,6 +59,9 @@
     .card-icon{
       width: 24px;
       height: 24px;
+      &.loading{
+        animation: rotate infinite 0.8s forwards linear;
+      }
     }
 
     .card-btn{
@@ -85,4 +91,22 @@
     background-color: #fff;
     z-index: 1;
   }
+}
+@keyframes rotate {
+  0%{
+    transform: rotate(0deg);
+  }
+  0%{
+    transform: rotate(360deg);
+  }
+}
+
+.adm-toast-mask .adm-toast-main.adm-toast-main-icon{
+  min-width: 120px;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
 }

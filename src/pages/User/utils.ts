@@ -1,5 +1,5 @@
 import { FingerImg, PwdImg, CardImg, FaceImg } from '@src/assets/pwd';
-
+export const sdk = window.h5PanelSdk;
 export const iconMap = {
   finger: FingerImg,
   card: CardImg,

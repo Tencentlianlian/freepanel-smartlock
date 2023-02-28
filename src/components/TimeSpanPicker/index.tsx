@@ -23,6 +23,10 @@ export function TimeSpanPicker({ value, onChange, visible, onClose, title,  }: T
     visible={visible}
     onClose={onClose}
     className="iotp-timespan"
+    bodyStyle={{
+      borderTopLeftRadius: '8px',
+      borderTopRightRadius: '8px',
+    }}
   >
     <div className="iotp-timespan-hd">
       <a
@@ -38,6 +42,7 @@ export function TimeSpanPicker({ value, onChange, visible, onClose, title,  }: T
     <div className="iotp-timespan-bd">
       <PickerView
         columns={columns}
+        value={timespan[0]}
         onChange={value => {
           console.log('start', value);
           setTimespan([value, timespan[1]]);
@@ -46,6 +51,7 @@ export function TimeSpanPicker({ value, onChange, visible, onClose, title,  }: T
       <span style={{ width: 20 }}>—</span>
       <PickerView
         columns={columns}
+        value={timespan[1]}
         onChange={value => {
           console.log('end', value);
           setTimespan([timespan[0], value]);

@@ -27,7 +27,7 @@ type UserResult = [
   { userInfo: UserInfo, userIndex: number },
   {
     deleteUser: (userid) => Promise<void>,
-    editUser: (userInfo: UserInfo, index?: number) => Promise<void>,
+    editUser: (userInfo: Pick<UserInfo, 'userid' | 'name' | 'effectiveTime'>, index?: number) => Promise<void>,
     addUser: (userInfo: Pick<UserInfo, 'userid' | 'name'>) => Promise<void>
   }
 ];
@@ -54,6 +54,19 @@ export const authNames = {
   faces: '面容',
 };
 
+export const getEffectiveTime = (effectiveTime: EffectiveTime) => {
+  if (effectiveTime.type === 0) {
+    return '永久有效';
+  }
+  const {
+    beginDate,
+    endDate,
+    beginTime,
+    endTime
+  } = effectiveTime;
+  return `${beginDate}-${endDate}每天${beginTime}-${endTime}有效`;
+};
+
 export const useUser = ({ id, name }: { id: string, name?: string }): UserResult => {
   const [{ deviceData }] = useDeviceInfo();
   const {
@@ -72,10 +85,10 @@ export const useUser = ({ id, name }: { id: string, name?: string }): UserResult
     await sdk.callDeviceAction({ userid }, 'delete_user');
   };
 
-  const editUser = async (userInfo: UserInfo, index = userIndex) => {
+  const editUser = async (userInfo, index = userIndex) => {
     await sdk.callDeviceAction({
       ...userInfo,
-      effectiveTime: userInfo.effectiveTime || '',
+      effectiveTime: JSON.stringify(userInfo.effectiveTime) || '',
     }, 'edit_user');
   };
 
