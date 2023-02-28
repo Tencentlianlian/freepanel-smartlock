@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
 import { useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, ActionSheet, Toast } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef } from 'antd-mobile';
 import { Log } from './components/Log';
 import { PasswordModal } from './components/PasswordModal';
 import dayjs from 'dayjs';
@@ -52,6 +52,17 @@ export function Home() {
         return data + '日';
       default:
         return data;
+    }
+  }, []);
+
+  const floatPanelRef = useCallback((floatPanelRef: FloatingPanelRef) => {
+    const userNode = document.querySelector('.user-cell');
+    if (userNode) {
+      const { top, height } =  userNode.getBoundingClientRect();
+      console.log('floatPanelRef', floatPanelRef, userNode);
+      setTimeout(() => {
+        floatPanelRef.setHeight(window.innerHeight - top - height - 10);
+      }, 100);
     }
   }, []);
 
@@ -217,15 +228,20 @@ export function Home() {
       </Card>
     </div>
 
-    <Cell
-      icon="person"
-      title="用户管理"
-      className='user-cell'
-      onClick={() => navigate('/user')}
-      showArrow
-    ></Cell>
+    <div>
+      <Cell
+        icon="person"
+        title="用户管理"
+        className='user-cell'
+        onClick={() => navigate('/user')}
+        showArrow
+      ></Cell>
+    </div>
 
-    <FloatingPanel anchors={[0.1 * window.innerHeight, 0.3 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}>
+    <FloatingPanel
+      anchors={[0.1 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}
+      ref={floatPanelRef}
+    >
       <div className="log-menu">
         <div className="log-type"
           onClick={() => setVisible(true)}

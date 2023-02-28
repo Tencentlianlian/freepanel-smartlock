@@ -118,7 +118,6 @@ export function Log({ date, logType }) {
         return data;
     }
   }, [data, logType]);
-  console.log({filteredData});
   return (
     <div className="wrapper">
       <Timeline items={filteredData.map(item => {
