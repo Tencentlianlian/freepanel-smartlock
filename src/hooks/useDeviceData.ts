@@ -27,6 +27,7 @@ export type UseDeviceInfoResult = [UserDeviceInfoData, UseDeviceInfoHandler];
 export enum UseDeviceInfoAction {
   Init = 'Init',
   UpdateDeviceData = 'UpdateDeviceData',
+  UpdateDeviceInfo = 'UpdateDeviceInfo',
   UpdateDeviceStatus = 'UpdateDeviceStatus',
 }
 
@@ -40,8 +41,8 @@ const getFirstKey = (obj = {}): string => {
 function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
   const { type, payload } = action;
 
-  // console.log('action => ', action.type, payload);
-  // console.log('prev state => ', state);
+  console.log('action => ', action.type, payload);
+  console.log('prev state => ', state);
 
   const nextState = (() => {
     switch (type) {
@@ -64,6 +65,20 @@ function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
         return {
           ...state,
           deviceData,
+        };
+      }
+      case UseDeviceInfoAction.UpdateDeviceInfo: {
+        const deviceInfo = { ...state.deviceInfo };
+
+        for (const key in payload.deviceInfo) {
+          if (!deviceInfo[key] || deviceInfo[key] !== payload.deviceInfo[key]) {
+            deviceInfo[key] = payload.deviceInfo[key];
+          }
+        }
+
+        return {
+          ...state,
+          deviceInfo,
         };
       }
       case UseDeviceInfoAction.UpdateDeviceStatus: {
@@ -184,17 +199,35 @@ export const useDeviceInfo = (): UseDeviceInfoResult => {
       }
     };
 
+    const handleWsPush = ({ action, params }) => {
+      if (action === 'DeviceChange') {
+        const { DeviceId, Type, SubType, Payload } = params;
+        if (SubType === 'DeviceAliasUpdate' && DeviceId === sdk.deviceId) {
+          try {
+            const { DeviceAlias } = JSON.parse(sdk.appDevSdk.utils.base64.decode(Payload));
+            dispatch({
+              type: UseDeviceInfoAction.UpdateDeviceInfo,
+              payload: { deviceInfo: { AliasName: DeviceAlias } },
+            });
+          } catch (err) {
+            console.warn('update alias failed', err);
+          }
+        }
+      }
+    }
+
     sdk
       .on('wsControl', handleWsControl)
       .on('wsReport', handleWsReport)
-      .on('wsStatusChange', handleWsStatusChange);
-
+      .on('wsStatusChange', handleWsStatusChange)
+      .on('wsPush', handleWsPush);
     // TODO 后续明确具体线上与测试的差异后 进行去掉wsControl处理
     // sdk
     //   .on('wsReport', handleWsReport)
     //   .on('wsStatusChange', handleWsStatusChange);
 
     // 当小程序进入后台后，可能无法及时同步 在线状态，这时要调用 api 同步下在线状态
+
     const getDeviceStatus = () => {
       if (sdk.isMock) {
         return Promise.resolve(1);

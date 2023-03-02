@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
 import { useDeviceInfo } from '@src/hooks';
 import { useTitle } from '@src/hooks/useTitle';
@@ -21,7 +21,6 @@ export function Setting() {
   const [{ deviceData, deviceInfo, templateMap }, { doControlDeviceData }] = useDeviceInfo();
   const { volume } = templateMap;
   const volumeOptions = getDefine(volume);
-  console.log({ deviceData, templateMap, volume });
   return <div className='page setting'>
     <CellGroup>
       <Cell

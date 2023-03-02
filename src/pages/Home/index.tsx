@@ -34,8 +34,7 @@ export function Home() {
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
   const offline = useOffline({
-    checkForceOnline: true,
-    showTip: false
+    checkForceOnline: true
   });
   const disabledRef = useRef(false);
   const videoDeviceId = sdk.deviceId;
@@ -61,7 +60,7 @@ export function Home() {
       const { top, height } =  userNode.getBoundingClientRect();
       console.log('floatPanelRef', floatPanelRef, userNode);
       setTimeout(() => {
-        floatPanelRef.setHeight(window.innerHeight - top - height - 10);
+        floatPanelRef?.setHeight(window.innerHeight - top - height - 10);
       }, 100);
     }
   }, []);
