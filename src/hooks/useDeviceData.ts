@@ -40,8 +40,8 @@ const getFirstKey = (obj = {}): string => {
 function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
   const { type, payload } = action;
 
-  console.log('action => ', action.type, payload);
-  console.log('prev state => ', state);
+  // console.log('action => ', action.type, payload);
+  // console.log('prev state => ', state);
 
   const nextState = (() => {
     switch (type) {
@@ -82,7 +82,7 @@ function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
     return state;
   })();
 
-  console.log('next state => ', nextState);
+  // console.log('next state => ', nextState);
 
   return nextState;
 }
@@ -133,7 +133,7 @@ export const useDeviceInfo = (): UseDeviceInfoResult => {
     let deviceData;
 
     if (typeof idOrDeviceData === 'string') {
-      deviceData = { [idOrDeviceData]: value };
+      deviceData = { [idOrDeviceData]: typeof value === 'boolean' ? Number(value) : value };
     } else {
       deviceData = idOrDeviceData;
     }

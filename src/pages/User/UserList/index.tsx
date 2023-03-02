@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTitle } from '@src/hooks/useTitle';
 import { Card, Btn, Cell } from 'qcloud-iot-panel-component';
 import { useNavigate } from 'react-router-dom';
 import { useDeviceInfo } from '@src/hooks';
@@ -15,6 +16,7 @@ interface User{
 }
 
 export function UserList() {
+  useTitle('用户列表');
   const navigate = useNavigate();
   const [{ deviceData }] = useDeviceInfo();
   const { users = [] } = deviceData;
