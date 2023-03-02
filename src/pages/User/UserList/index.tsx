@@ -43,7 +43,7 @@ export function UserList() {
       userid: nanoid(6),
     };
     addUser(user).then(
-      () => navigate(`/user/add?name=${user.name}&userid=${user.userid}`)
+      () => navigate(`/user/edit/${user.userid}`)
     ).catch((err) => {
       console.warn('添加失败', err);
       window.h5PanelSdk.tips.showError('添加失败');

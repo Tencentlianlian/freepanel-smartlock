@@ -17,6 +17,7 @@ export function UserPwdAdd() {
   const [search] = useSearchParams();
   const userid = search.get('userid');
   const type = search.get('type') as string;
+  const isFromUserAdd = search.get('from') === 'useradd';
   const sdk = window.h5PanelSdk;
   const navigate = useNavigate();
   const [{ userInfo }] = useUser({ id: userid as  string });
@@ -60,7 +61,13 @@ export function UserPwdAdd() {
         <div className="user-name">用户: {userInfo.name}</div>
       </div>
       <Btn type='primary'
-        onClick={cancel}
+        onClick={() => {
+          if (isFromUserAdd) {
+            navigate(`/user/edit/${userid}`);
+            return;
+          }
+          cancel();
+        }}
       >完成</Btn>
     </div>;
   }

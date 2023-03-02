@@ -55,14 +55,17 @@ export const authNames = {
 };
 
 export const getEffectiveTime = (effectiveTime: EffectiveTime) => {
+  if (effectiveTime.type === undefined) {
+    return '无有效时间限制';
+  }
   if (effectiveTime.type === 0) {
     return '永久有效';
   }
   const {
-    beginDate,
-    endDate,
-    beginTime,
-    endTime
+    beginDate = '',
+    endDate = '',
+    beginTime = '',
+    endTime = ''
   } = effectiveTime;
   return `${beginDate}-${endDate}每天${beginTime}-${endTime}有效`;
 };

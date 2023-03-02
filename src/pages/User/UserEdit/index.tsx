@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDeviceInfo } from '@src/hooks';
-import { Cell, Btn, Icon } from 'qcloud-iot-panel-component';
+import { Cell, Btn, Card } from 'qcloud-iot-panel-component';
 import { UserIcon } from '../components/UserIcon';
 import { Popup } from 'antd-mobile';
 import { FingerImg, PwdImg, CardImg, FaceImg } from '@src/assets/pwd';
 import DeleteImg from '@src/assets/delete.svg';
 import './index.less';
 import { useUser, getEffectiveTime } from '@src/hooks/useUser';
+import { actionMap, iconMap, nameMap } from '../utils';
 
 export function UserEdit() {
   const params = useParams();
@@ -16,6 +17,7 @@ export function UserEdit() {
   const [popupVisible, setPopupVisible] = useState(false);
   const [{ deviceData }] = useDeviceInfo();
   const [{ userInfo }, { deleteUser }] = useUser({ id: params.id as string });
+  const hasNoPwd = [userInfo.faces, userInfo.cards, userInfo.fingerprints, userInfo.passwords].every(auth => auth.length === 0);
   const addUserPwd = (type: string) => {
     navigate(`/user/password-add?userid=${userInfo.userid}&type=${type}`);
   };
@@ -26,7 +28,6 @@ export function UserEdit() {
 
     try {
       const res = await sdk.callDeviceAction({ id }, `delete_${type}`);
-      console.log('正在删除', res);
       if (JSON.parse(res.OutputParams || '{}').result !== 1) {
         throw new Error('删除失败, 请重试');
       } else {
@@ -54,6 +55,24 @@ export function UserEdit() {
       showArrow
     />
 
+    {  hasNoPwd && <div className="pwd-add-area">
+      <div className="desc">该用户未添加任何密码<br/>
+      请选择任一类型进行添加
+      </div>
+      {
+        Object.keys(actionMap).map((key) => (
+          <Card key={key}
+            className="pwd-card"
+            onClick={() => addUserPwd(key)}
+          >
+            <img src={iconMap[key]} alt="" />
+            <div className="name">{nameMap[key]}</div>
+          </Card>
+        ))
+      }
+      <div className="cards"></div>
+    </div>}
+
     {userInfo.fingerprints.length > 0 && <Cell.Group title="指纹识别" className='pwd-group'>
       {
         userInfo.fingerprints.map(({ id: key }, index) => {
@@ -61,30 +80,6 @@ export function UserEdit() {
             key={index}
             title={`指纹${index + 1}`}
             onClick={() => removeAuth(key, 'fingerprint')}
-            footer={deleteIcon}
-          />;
-        })
-      }
-    </Cell.Group>}
-    {userInfo.cards.length > 0 && <Cell.Group title="卡片" className='pwd-group'>
-      {
-        userInfo.cards.map(({ id: key }, index) => {
-          return <Cell
-            key={index}
-            title={`卡片${index + 1}`}
-            onClick={() => removeAuth(key, 'card')}
-            footer={deleteIcon}
-          />;
-        })
-      }
-    </Cell.Group>}
-    {userInfo.faces.length > 0 && <Cell.Group title="面部识别" className='pwd-group'>
-      {
-        userInfo.faces.map(({ id: key }, index) => {
-          return <Cell
-            key={index}
-            title={`面容ID${index + 1}`}
-            onClick={() => removeAuth(key, 'face')}
             footer={deleteIcon}
           />;
         })
@@ -102,7 +97,31 @@ export function UserEdit() {
         })
       }
     </Cell.Group>}
+    {userInfo.faces.length > 0 && <Cell.Group title="面部识别" className='pwd-group'>
+      {
+        userInfo.faces.map(({ id: key }, index) => {
+          return <Cell
+            key={index}
+            title={`面容ID${index + 1}`}
+            onClick={() => removeAuth(key, 'face')}
+            footer={deleteIcon}
+          />;
+        })
+      }
+    </Cell.Group>}
 
+    {userInfo.cards.length > 0 && <Cell.Group title="卡片" className='pwd-group'>
+      {
+        userInfo.cards.map(({ id: key }, index) => {
+          return <Cell
+            key={index}
+            title={`卡片${index + 1}`}
+            onClick={() => removeAuth(key, 'card')}
+            footer={deleteIcon}
+          />;
+        })
+      }
+    </Cell.Group>}
     <Btn type="default"
       style={{
         marginTop: 20
