@@ -46,7 +46,11 @@ export function UserEdit() {
     <Cell
       icon={<UserIcon/>}
       title={userInfo.name}
-      subTitle={userInfo.effectiveTime ? getEffectiveTime(userInfo.effectiveTime) : '无有效时间限制'}
+      subTitle={<span
+        style={{ marginTop: 4, display: 'block' }}
+      >
+        {userInfo.effectiveTime ? getEffectiveTime(userInfo.effectiveTime) : '无有效时间限制'}
+      </span>}
       style={{
         background: 'transparent',
         paddingBottom: 20,

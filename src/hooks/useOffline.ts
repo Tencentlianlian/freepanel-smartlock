@@ -5,8 +5,9 @@ export function useOffline({
   showTip = true,
   checkForceOnline = false,
 }) {
-  const [{ deviceStatus }] = useDeviceInfo();
-  const offline = deviceStatus === 0;
+  const [{ deviceInfo }] = useDeviceInfo();
+
+  const offline = deviceInfo.Status === 0;
   const sdk = window.h5PanelSdk;
   useEffect(() => {
     if (!showTip) return;

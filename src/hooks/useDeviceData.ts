@@ -41,8 +41,8 @@ const getFirstKey = (obj = {}): string => {
 function reducer(state: UseDeviceInfoState, action): UseDeviceInfoState {
   const { type, payload } = action;
 
-  console.log('action => ', action.type, payload);
-  console.log('prev state => ', state);
+  // console.log('action => ', action.type, payload);
+  // console.log('prev state => ', state);
 
   const nextState = (() => {
     switch (type) {

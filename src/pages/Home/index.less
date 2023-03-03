@@ -30,8 +30,13 @@
   }
   .lock-state{
     margin: 0 auto 26px;
-    padding-top: 52px;
+    padding-top: 12px;
     width: max-content;
+    // height: 218px;
+    // box-sizing: border-box;
+    &.tip-show{
+      padding-top: 52px;
+    }
     div.battery{
       display: flex;
       justify-content: center;
@@ -50,26 +55,27 @@
     background: rgba(21,22,26,0.3);
     margin: 0 8px;
   }
-
+  .card-icon{
+    width: 24px;
+    height: 24px;
+    &.loading{
+      animation: rotate infinite 0.8s forwards linear;
+    }
+  }
   .card-list{
     white-space: nowrap;
     overflow: auto;
     margin-bottom: 12px;
-    padding-left: 16px;
-    .card-icon{
-      width: 24px;
-      height: 24px;
-      &.loading{
-        animation: rotate infinite 0.8s forwards linear;
-      }
-    }
-
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
     .card-btn{
       display: inline-block;
-      width: 104px;
+      @total: 375px - 56px;
+      width: calc(@total / 3);
       margin-right: 0;
       height: 88px;
-      margin: 0 12px 0 0;
+      margin: 0 0 0 0;
       &-title{
         margin-top: 12px;
       }
@@ -79,6 +85,11 @@
   .user-cell{
     margin: 0 16px;
     height: 60px;
+    box-sizing: border-box;
+    .iotp-cell-title{
+      font-size: 14px;
+      margin-left: 8px;
+    }
   }
   .log-menu{
     display: flex;
@@ -109,4 +120,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 0;
+}
+.adm-popup .adm-action-sheet-button-item-name{
+  font-size: 16px
 }

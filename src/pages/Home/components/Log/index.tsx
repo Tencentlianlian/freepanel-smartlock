@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useLoadMore } from '@src/hooks/useLoadMore';
 import { InfiniteScroll } from 'antd-mobile';
 import { useDeviceInfo } from '@src/hooks';
-
+import './index.less';
 import dayjs from 'dayjs';
 
 const eventMap: Record<string, string> = {

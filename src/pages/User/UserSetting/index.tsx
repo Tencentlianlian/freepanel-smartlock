@@ -1,9 +1,10 @@
 import { Cell } from 'qcloud-iot-panel-component';
 import { useParams } from 'react-router-dom';
 import { useUser } from '@src/hooks/useUser';
-import { Picker, DatePicker } from 'antd-mobile';
+import { Picker, DatePicker, Input } from 'antd-mobile';
 import { WeekPicker } from '@src/components/WeekPicker';
 import { TimeSpanPicker } from '@src/components/TimeSpanPicker';
+import { PopupModal } from '@src/components/PopupModal';
 import { useState, useEffect } from 'react';
 
 import './index.less';
@@ -18,11 +19,17 @@ export function UserSetting() {
   const [typeVisible, setTypeVisible] = useState(false);
   const [weekVisible, setWeekVisible] = useState(false);
   const [timespanVisible, setTimespanVisible] = useState(false);
+  const [nameVisible, setNameVisible] = useState(false);
+  const [name, setName] = useState(userInfo.name);
   const weeks = '周一 周二 周三 周四 周五 周六 周日'.split(' ');
 
   const types = ['永久有效', '周期有效'];
 
   useEffect(() => {
+    console.log({ eTime });
+    if (!eTime || Object.keys(eTime).length === 0) {
+      return;
+    }
     editUser({
       userid: userInfo.userid,
       name: userInfo.name,
@@ -32,10 +39,23 @@ export function UserSetting() {
       window.h5PanelSdk.tips.showError('保存失败');
     });
   }, [eTime]);
+
+  const editUserName = (name) => {
+    console.log('edit User name');
+    editUser({
+      userid: userInfo.userid,
+      name: name,
+      effectiveTime: eTime
+    }).catch(err => {
+      console.warn('编辑失败', err);
+      window.h5PanelSdk.tips.showError('保存失败');
+    });
+  };
   return <div className='page user-setting'>
     <Cell
       title="用户名称"
       showArrow
+      onClick={() => setNameVisible(true)}
       footer={
         userInfo.name
       }
@@ -131,5 +151,23 @@ export function UserSetting() {
       visible={timespanVisible}
       onClose={() => setTimespanVisible(false)}
     />
+    <PopupModal
+      visible={nameVisible}
+      onClose={() => setNameVisible(false)}
+      onConfirm={() => {
+        setNameVisible(false);
+        editUserName(name);
+      }}
+    >
+      <div className='name-input'>
+        <Input
+          autoFocus
+          value={name}
+          maxLength={5}
+          onChange={(val) => setName(val)}
+          placeholder="请输入用户名"
+        ></Input>
+      </div>
+    </PopupModal>
   </div>;
 }

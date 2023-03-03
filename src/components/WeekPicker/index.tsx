@@ -66,7 +66,7 @@ export function WeekPicker<T>({ value = [], onChange, onClose, title, options = 
       <div className="iotp-picker-hd-title">{title}</div>
       <a
         role="button"
-        onClick={() => onChange(checked)}
+        onClick={() => onChange(checked.sort())}
       >确定</a>
     </div>
     {optionsEl}

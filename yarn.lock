@@ -1619,7 +1619,7 @@
   "resolved" "https://registry.npmjs.org/ahooks-v3-count/-/ahooks-v3-count-1.0.0.tgz"
   "version" "1.0.0"
 
-"ahooks@^3.7.2":
+"ahooks@^3.7.2", "ahooks@3.7.4":
   "integrity" "sha512-hvgdqzPUKXn95mK3cGlDCi/ZZqv+FRibCUCFT8zW3hCwLGvixVfnHrIW2/2lgzPdLo8mLjp/XOdIJvcPvE2lgQ=="
   "resolved" "https://registry.npmjs.org/ahooks/-/ahooks-3.7.4.tgz"
   "version" "3.7.4"

@@ -5,7 +5,7 @@
   &-item{
     display: flex;
     position: relative;
-    @itemHeight: 56px;
+    @itemHeight: 64px;
     height: @itemHeight;
     align-items: center;
     &:last-child .timeline-item-dot:after{
@@ -44,6 +44,7 @@
     .timeline-item-content{
       color: rgba(21,22,26,1);
       font-size: 14px;
+      padding-top: 2px;
     }
     &.alert{
       .timeline-item-dot{
@@ -51,7 +52,7 @@
         box-shadow: 4px 4px 16px 0 rgba(250,81,81,0.24);
       }
       .timeline-item-title{
-        color:  rgba(250,81,81,0.6);;
+        color:  rgba(250,81,81,0.6);
       }
       .timeline-item-content{
         color: var(--warn-color);

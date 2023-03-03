@@ -6,13 +6,16 @@ import { useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef } from 'antd-mobile';
 import { Log } from './components/Log';
+import { useLongPress } from 'ahooks';
 import { PasswordModal } from './components/PasswordModal';
+import isToday from 'dayjs/plugin/isToday';
 import dayjs from 'dayjs';
 
 import pwdImg from '../../assets/icon_password.svg';
 import lockImg from '../../assets/unlock.svg';
 import liveImg from '../../assets/live.svg';
 import loadingImg from '../../assets/loading.svg';
+import personImg from '../../assets/person.svg';
 
 
 const actions = [
@@ -20,6 +23,7 @@ const actions = [
   { text: '门铃呼叫', key: 'doorbell' },
   { text: '告警信息', key: 'alarm_lock' },
 ];
+dayjs.extend(isToday);
 
 export function Home() {
   const sdk = window.h5PanelSdk;
@@ -37,6 +41,7 @@ export function Home() {
     checkForceOnline: true
   });
   const disabledRef = useRef(false);
+  const unlockBtnRef = useRef(null);
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
 
@@ -57,11 +62,12 @@ export function Home() {
   const floatPanelRef = useCallback((floatPanelRef: FloatingPanelRef) => {
     const userNode = document.querySelector('.user-cell');
     if (userNode) {
-      const { top, height } =  userNode.getBoundingClientRect();
-      console.log('floatPanelRef', floatPanelRef, userNode);
+
       setTimeout(() => {
-        floatPanelRef?.setHeight(window.innerHeight - top - height - 10);
-      }, 100);
+        const { top, height } =  userNode.getBoundingClientRect();
+        console.log('floatPanelRef', floatPanelRef, userNode);
+        floatPanelRef?.setHeight(window.innerHeight - top - height - 12);
+      }, 300);
     }
   }, []);
 
@@ -125,6 +131,7 @@ export function Home() {
   };
 
   const unlock = () => {
+    console.log('unlock');
     if (loading) {
       return;
     }
@@ -145,6 +152,8 @@ export function Home() {
       });
   };
 
+  useLongPress(unlock, document.querySelector('.unlock-btn'), { delay: 300 });
+
   useEffect(() => {
     if (sdk.deviceStatus === 0) {
       return;
@@ -164,7 +173,7 @@ export function Home() {
     });
   }, []);
 
-  return <div className={classNames('page home-page', { unlock: isUnlock })}>
+  return <div className={classNames('page home-page', { unlock: isUnlock})}>
     {notifyTipShow && <div className="notify-tip"
       color='primary'
     >
@@ -191,7 +200,7 @@ export function Home() {
       <Icon theme="ios" icon="more" />
     </span>
 
-    <div className="lock-state">
+    <div className={classNames('lock-state',{ 'tip-show': notifyTipShow })}>
       {isUnlock ? <img src="https://qcloudimg.tencent-cloud.cn/raw/7cdaa6cca5e56aa8f8da32d21e621cf3.png" alt="" /> 
         : <img src="https://iot.gtimg.com/cdn/ad/shuaisguo/lock+1676455008626.png" alt="" />
       }
@@ -211,13 +220,14 @@ export function Home() {
         <div className="card-btn-title">临时密码</div>
       </Card>
       <Card
-        className="card-btn"
-        onClick={unlock}
+        className="card-btn unlock-btn"
+        onClick={console.log}
       >
-        <img src={loading ? loadingImg : lockImg} alt="点击开锁"
+        <img src={loading ? loadingImg : lockImg} alt="长按开锁"
           className={classNames('card-icon', { loading: loading })} />
-        <div className="card-btn-title">点击开锁</div>
+        <div className="card-btn-title">长按开锁</div>
       </Card>
+
       <Card
         className="card-btn"
         onClick={goVideoPanel}
@@ -229,7 +239,7 @@ export function Home() {
 
     <div>
       <Cell
-        icon="person"
+        icon={<img src={personImg} className="card-icon"/>}
         title="用户管理"
         className='user-cell'
         onClick={() => navigate('/user')}
@@ -238,7 +248,8 @@ export function Home() {
     </div>
 
     <FloatingPanel
-      anchors={[0.1 * window.innerHeight, 0.6 * window.innerHeight, 0.9 * window.innerHeight]}
+      anchors={[0.1 * window.innerHeight, 0.9 * window.innerHeight]}
+      handleDraggingOfContent={false}
       ref={floatPanelRef}
     >
       <div className="log-menu">
@@ -253,7 +264,7 @@ export function Home() {
         <div className="date-picker"
           onClick={() => setPickerVisible(true)}
         >
-          今天({dayjs(logDate).format('YYYY-MM-DD')})
+          {dayjs(logDate).isToday() ? '今天' : ''}({dayjs(logDate).format('YYYY-MM-DD')})
           <Icon icon="arrow-down" theme="ios" color="#ccc" size={16}/>
         </div>
         <DatePicker
