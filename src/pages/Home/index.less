@@ -25,8 +25,12 @@
   }
   .device-setting{
     position: absolute;
-    top: 50px;
+    @top: 15px;
+    top: @top;
     right: 16px;
+    &.bottom{
+      top: (@top + 40px);
+    }
   }
   .lock-state{
     margin: 0 auto 26px;

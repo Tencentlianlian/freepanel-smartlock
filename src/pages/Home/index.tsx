@@ -171,7 +171,7 @@ export function Home() {
     });
   }, []);
 
-  return <div className={classNames('page home-page', { unlock: isUnlock})}>
+  return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
       color='primary'
     >
@@ -192,7 +192,7 @@ export function Home() {
       >去开启</Button>
     </div>}
     <span
-      className="device-setting"
+      className={classNames('device-setting',{ bottom: notifyTipShow })}
       onClick={() => navigate('/setting')}
     > 
       <Icon theme="ios" icon="more" />
