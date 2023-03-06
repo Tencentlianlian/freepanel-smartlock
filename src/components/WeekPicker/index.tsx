@@ -1,5 +1,5 @@
 import { Popup, Button } from 'antd-mobile';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import './index.less';
 
@@ -14,6 +14,9 @@ interface PickerProps<T> {
 
 export function WeekPicker<T>({ value = [], onChange, onClose, title, options = [], visible }: PickerProps<T>) {
   const [checked, setChecked] = useState(value);
+  useEffect(() => {
+    setChecked(value);
+  }, [value]);
   const onOptionChange = (option) => {
     const { value } = option;
     const index = checked.indexOf(value);

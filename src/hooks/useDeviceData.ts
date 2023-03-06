@@ -235,7 +235,6 @@ export const useDeviceInfo = (): UseDeviceInfoResult => {
       return sdk.requestTokenApi('AppGetDeviceStatuses', {
         DeviceIds: [sdk.deviceId],
       }).then(({ DeviceStatuses }) => {
-        console.log({ DeviceStatuses });
         return DeviceStatuses[0]?.Online;
       });
     };

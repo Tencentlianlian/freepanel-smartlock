@@ -41,7 +41,6 @@ export function Home() {
     checkForceOnline: true
   });
   const disabledRef = useRef(false);
-  const unlockBtnRef = useRef(null);
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
 
@@ -65,7 +64,6 @@ export function Home() {
 
       setTimeout(() => {
         const { top, height } =  userNode.getBoundingClientRect();
-        console.log('floatPanelRef', floatPanelRef, userNode);
         floatPanelRef?.setHeight(window.innerHeight - top - height - 12);
       }, 300);
     }

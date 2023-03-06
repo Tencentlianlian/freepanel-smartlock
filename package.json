@@ -39,7 +39,7 @@
     "dev": "webpack-dev-server --config webpack/webpack.config.js --env.mode=development --watch",
     "build": "webpack --config webpack/webpack.config.js --env.mode=production",
     "release": "npm run build",
-    "dev:p": "npm run dev -- --productId=8A26S0J1QB"
+    "dev:p": "npm run dev -- --productId=HF8P6QKAPM --deviceName=dev3"
   },
   "eslintConfig": {
     "extends": "react-app"
