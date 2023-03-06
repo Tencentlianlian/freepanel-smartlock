@@ -150,7 +150,7 @@ export function Home() {
       });
   };
 
-  useLongPress(unlock, document.querySelector('.unlock-btn'), { delay: 300 });
+  useLongPress(unlock, document.querySelector('.unlock-btn'), { delay: 1500 });
 
   useEffect(() => {
     if (sdk.deviceStatus === 0) {
