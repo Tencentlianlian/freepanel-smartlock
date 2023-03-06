@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useUser } from '@src/hooks/useUser';
 import { Picker, DatePicker, Input } from 'antd-mobile';
 import { WeekPicker } from '@src/components/WeekPicker';
+import dayjs from 'dayjs';
 import { TimeSpanPicker } from '@src/components/TimeSpanPicker';
 import { PopupModal } from '@src/components/PopupModal';
 import { useState, useEffect } from 'react';
@@ -24,6 +25,13 @@ export function UserSetting() {
   const weeks = '周一 周二 周三 周四 周五 周六 周日'.split(' ');
 
   const types = ['永久有效', '周期有效'];
+
+  const renderWeek = () => {
+    if (eTime.week?.length === 7) {
+      return '周一 ～ 周天';
+    }
+    return eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>)
+  };
 
   useEffect(() => {
     console.log({ eTime });
@@ -63,7 +71,7 @@ export function UserSetting() {
     <Cell.Group style={{ marginTop: 12 }}>
       <Cell
         title="权限类型"
-        footer={types[eTime.type || 0]}
+        footer={types[eTime.type]}
         onClick={() => setTypeVisible(true)}
         showArrow
       ></Cell>
@@ -89,7 +97,7 @@ export function UserSetting() {
         <Cell
           title="有效日"
           onClick={() => setWeekVisible(true)}
-          footer={eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>)}
+          footer={renderWeek()}
           showArrow
         ></Cell>
       </>}
@@ -100,7 +108,19 @@ export function UserSetting() {
       visible={typeVisible}
       onCancel={() => setTypeVisible(false)}
       onConfirm={(val) => {
-        setETime({ ...eTime, type: types.indexOf(val[0] as string) as 0 | 1 });
+        const selectedType = types.indexOf(val[0] as string) as 0 | 1;
+        if (Object.keys(eTime).length === 0 && selectedType === 1) {
+          setETime({ ...eTime,
+            type: selectedType,
+            beginDate: dayjs().format('YYYY/MM/DD'),
+            endDate: dayjs().add(1, 'year').format('YYYY/MM/DD'),
+            beginTime: '00:00',
+            endTime: '23:59',
+            week: [0,1,2,3,4,5,6]
+          });
+        } else {
+          setETime({ ...eTime, type: selectedType });
+        }
         setTypeVisible(false);
       }}
     ></Picker>
@@ -111,7 +131,7 @@ export function UserSetting() {
       defaultValue={new Date}
       onCancel={() => setBeginVisible(false)}
       onConfirm={(val) => {
-        setETime({ ...eTime, beginDate: val.toLocaleDateString() });
+        setETime({ ...eTime, beginDate: dayjs(val).format('YYYY/MM/DD') });
         setBeginVisible(false);
       }}
     ></DatePicker>
@@ -122,7 +142,7 @@ export function UserSetting() {
       visible={endVisible}
       onCancel={() => setEndVisible(false)}
       onConfirm={(val) => {
-        setETime({ ...eTime, endDate: val.toLocaleDateString() });
+        setETime({ ...eTime, endDate: dayjs(val).format('YYYY/MM/DD') });
         setEndVisible(false);
       }}
     ></DatePicker>

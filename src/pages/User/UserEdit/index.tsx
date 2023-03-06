@@ -42,6 +42,21 @@ export function UserEdit() {
 
   const deleteIcon= <img src={DeleteImg} className="delete-icon"/>;
 
+  const removeUser = async() => {
+    const isConfirm = await window.h5PanelSdk.tips.confirm('删除用户', '删除用户后，该用户的信息和密码也将被删除', {
+      confirmColor: '#FA5151'
+    });
+    if (isConfirm) {
+      deleteUser(userInfo.userid).then(() => {
+        window.h5PanelSdk.tips.showSuccess('删除成功');
+        navigate(-1);
+      }).catch(err => {
+        window.h5PanelSdk.tips.showError('删除失败');
+        console.warn(err);
+      });
+    }
+  };
+
   return <div className='page user-edit'>
     <Cell
       icon={<UserIcon/>}
@@ -126,38 +141,27 @@ export function UserEdit() {
         })
       }
     </Cell.Group>}
-    <Btn type="default"
-      style={{
-        marginTop: 20
-      }}
-      onClick={async() => {
-        const isConfirm = await window.h5PanelSdk.tips.confirm('删除用户', '删除用户后，该用户的信息和密码也将被删除', {
-          confirmColor: '#FA5151'
-        });
-        if (isConfirm) {
-          deleteUser(userInfo.userid).then(() => {
-            window.h5PanelSdk.tips.showSuccess('删除成功');
-            navigate(-1);
-          }).catch(err => {
-            window.h5PanelSdk.tips.showError('删除失败');
-            console.warn(err);
-          });
-        }
-      }}
-    >删除用户</Btn>
-    <Btn type="primary" icon="add"
-      style={{
-        marginTop: 20
-      }}
-      onClick={() => setPopupVisible(true)}
-    >添加密码</Btn>
+    {!hasNoPwd &&  <>
+      <Btn type="default"
+        style={{
+          marginTop: 20
+        }}
+        onClick={removeUser}
+      >删除用户</Btn>
+      <Btn type="primary" icon="add"
+        style={{
+          marginTop: 20
+        }}
+        onClick={() => setPopupVisible(true)}
+      >添加密码</Btn>
+    </>}
+    {hasNoPwd && <a role={'button'} onClick={removeUser} className="remove-link">删除用户</a>}
     <Popup
       visible={popupVisible}
       onClose={() => setPopupVisible(false)}
       onMaskClick={() => {
         setPopupVisible(false);
       }}
-      bodyStyle={{ height: '25vh' }}
     >
       <div className="popup-title">
         请选择添加的密码类型

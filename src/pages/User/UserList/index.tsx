@@ -20,6 +20,7 @@ export function UserList() {
   const navigate = useNavigate();
   const [{ deviceData }] = useDeviceInfo();
   const { users = [] } = deviceData;
+  // const users = [];
   const [, { addUser }] = useUser({ id: 'null' });
   const renderSubtitle = (id: string) => {
     const auths = getPwdsById(id, deviceData);
@@ -50,13 +51,26 @@ export function UserList() {
     });
   };
 
+  if (users.length === 0) {
+    return <div className='empty user-list'>
+      <div>
+        <img src="https://qcloudimg.tencent-cloud.cn/raw/4beb826aa98a5520d1700ecbbdd43c6b.svg" alt=""></img>
+        <div className="empty-desc">暂无用户，快去新建用户吧</div>
+        <Btn type='primary'
+          onClick={addNewUser}
+          icon="add"
+        >新建用户</Btn>
+      </div>
+    </div>;
+  }
+
   return <div className='page user-list'>
     { (users as User[]).map((user, index) => {
       return (
         <Cell key={index} className="user-card"
           icon={<UserIcon />}
           title={user.name}
-          subTitle={renderSubtitle(user.userid)}
+          subTitle={<div style={{ marginTop: 4 }}>{renderSubtitle(user.userid)}</div>}
           onClick={() => navigate(`/user/edit/${user.userid}`)}
         ></Cell>
       );

@@ -2,6 +2,28 @@
   padding: 16px;
   background-color: #f5f5f5;
   min-height: 100vh;
+  box-sizing: border-box;
+  width: 100vw;
+  &.empty{
+    text-align: center; 
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    >div{
+      width: 100%;
+    }
+    img{
+      width: 280px;
+      height: 210px;
+      margin: 0 auto;
+      display: block;
+    }
+    .empty-desc{
+      color: #6c7078;
+      font-size: 14px;
+      margin: 0 27px;
+    }
+  }
   .user-card{
     margin: 16px 0;
 

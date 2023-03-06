@@ -65,7 +65,8 @@ export function Setting() {
         footer={volume.define.mapping[deviceData.volume]}
         onClick={async() => {
           const value = await Picker.prompt({
-            columns: [volumeOptions]
+            columns: [volumeOptions],
+            defaultValue: [deviceData.volume + '']
           });
           console.log('select:', value);
           if (value) {
