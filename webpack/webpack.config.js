@@ -5,6 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // 当 JS 文件大小超过 2MB 限制时，可置为 true 开启 webpack 的代码拆分
 // 开启后 npm run release 将输出多个文件，需要全部上传到控制台交互开发的设置项中
@@ -163,6 +164,8 @@ module.exports = (env, argv) => {
           autoprefixer: { disable: true },
         },
       }),
+      // 查看是否引入不必要的模块
+      !isDevMode && new BundleAnalyzerPlugin()
     ].filter(Boolean),
     stats: { children: false },
   };
