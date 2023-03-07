@@ -1,5 +1,6 @@
 /* eslint-disable */
 const path = require('path');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -44,15 +45,17 @@ module.exports = (env, argv) => {
     },
     devServer: {
       contentBase: distPath,
-      compress: true,
       port: 9000,
       host: '127.0.0.1',
       disableHostCheck: true, //  新增该配置项
       overlay: true,
+      hot: true,
       headers: {
         'access-control-allow-origin': '*'
       },
-      open: true,
+      open: {
+        newInstance: false
+      },
       openPage: `https://iot.cloud.tencent.com/h5panel/developing?productId=${productId}&deviceName=${deviceName}`,
     },
     module: {
@@ -67,6 +70,7 @@ module.exports = (env, argv) => {
               sourceType: 'unambiguous',
               presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
               plugins: [
+                isDevMode && require.resolve('react-refresh/babel'),
                 '@babel/plugin-proposal-class-properties',
                 [
                   '@babel/plugin-transform-runtime',
@@ -78,7 +82,7 @@ module.exports = (env, argv) => {
                     'useESModules': false,
                   }
                 ],
-              ]
+              ].filter(Boolean)
             },
           }
         },
@@ -144,6 +148,7 @@ module.exports = (env, argv) => {
       } : {},
     plugins: [
       new webpack.ProgressPlugin(),
+      isDevMode && new ReactRefreshWebpackPlugin(),
       new CleanWebpackPlugin(),
       ...(isDevMode ? [new webpack.HotModuleReplacementPlugin()] : []),
       new webpack.DefinePlugin({
