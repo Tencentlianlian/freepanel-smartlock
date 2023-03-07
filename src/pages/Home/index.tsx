@@ -32,11 +32,13 @@ export function Home() {
   const navigate = useNavigate();
   const [notifyTipShow, setNotifyTipShow] = useState(false); 
   const [pickerVisible, setPickerVisible] = useState(false);
+  const floatPanelRefCache = useRef<FloatingPanelRef>();
   // actionSheet visible
   const [visible, setVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
+  const [minHeight, setMinheight] = useState(0.1 * window.innerHeight);
   const offline = useOffline({
     checkForceOnline: true
   });
@@ -59,12 +61,14 @@ export function Home() {
   }, []);
 
   const floatPanelRef = useCallback((floatPanelRef: FloatingPanelRef) => {
+    floatPanelRefCache.current = floatPanelRef;
     const userNode = document.querySelector('.user-cell');
     if (userNode) {
-
       setTimeout(() => {
         const { top, height } =  userNode.getBoundingClientRect();
-        floatPanelRef?.setHeight(window.innerHeight - top - height - 12);
+        const minHeight = window.innerHeight - top - height - 12;
+        setMinheight(minHeight);
+        floatPanelRef?.setHeight(minHeight);
       }, 300);
     }
   }, []);
@@ -136,7 +140,6 @@ export function Home() {
     setLoading(true);
     sdk.callDeviceAction({}, 'unlock_remote')
       .then((res) => {
-        console.log(res);
         setLoading(false);
         Toast.show({
           icon: 'success',
@@ -170,6 +173,16 @@ export function Home() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const userNode = document.querySelector('.user-cell');
+    if (userNode) {
+      const { top, height } =  userNode.getBoundingClientRect();
+      const minHeight = window.innerHeight - top - height - 12;
+      setMinheight(minHeight);
+      floatPanelRefCache.current?.setHeight(minHeight);
+    }
+  }, [notifyTipShow]);
 
   return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
@@ -246,7 +259,7 @@ export function Home() {
     </div>
 
     <FloatingPanel
-      anchors={[0.1 * window.innerHeight, 0.9 * window.innerHeight]}
+      anchors={[minHeight, 0.9 * window.innerHeight]}
       handleDraggingOfContent={false}
       ref={floatPanelRef}
     >

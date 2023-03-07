@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDeviceInfo } from '@src/hooks';
 import { Cell, Btn, Card } from 'qcloud-iot-panel-component';
+import { useTitle } from '@src/hooks/useTitle';
 import { UserIcon } from '../components/UserIcon';
 import { Popup } from 'antd-mobile';
 import { FingerImg, PwdImg, CardImg, FaceImg } from '@src/assets/pwd';
@@ -21,6 +22,8 @@ export function UserEdit() {
   const addUserPwd = (type: string) => {
     navigate(`/user/password-add?userid=${userInfo.userid}&type=${type}`);
   };
+
+  useTitle('用户管理');
 
   const removeAuth = async (id, type: 'face' | 'password' | 'card' | 'fingerprint') => {
     const isDelete = await sdk.tips.confirm('确认删除?');
