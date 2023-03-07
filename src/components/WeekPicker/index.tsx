@@ -1,4 +1,4 @@
-import { Popup, Button } from 'antd-mobile';
+import { Popup } from 'antd-mobile';
 import { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import './index.less';
@@ -17,10 +17,10 @@ export function WeekPicker<T>({ value = [], onChange, onClose, title, options = 
   useEffect(() => {
     setChecked(value);
   }, [value]);
+
   const onOptionChange = (option) => {
     const { value } = option;
     const index = checked.indexOf(value);
-    console.log(checked, value, index);
     if (index !== -1) {
       console.log('remove');
       setChecked([
@@ -29,7 +29,6 @@ export function WeekPicker<T>({ value = [], onChange, onClose, title, options = 
       ]);
     } else {
       checked.push(option.value);
-      console.log({ checked });
       setChecked([...checked]);
     }
   };
