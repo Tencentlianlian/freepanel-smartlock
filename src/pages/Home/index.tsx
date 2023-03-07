@@ -10,6 +10,7 @@ import { useLongPress } from 'ahooks';
 import { PasswordModal } from './components/PasswordModal';
 import isToday from 'dayjs/plugin/isToday';
 import dayjs from 'dayjs';
+import { useTitle } from '@src/hooks/useTitle';
 
 import pwdImg from '../../assets/icon_password.svg';
 import lockImg from '../../assets/unlock.svg';
@@ -152,6 +153,8 @@ export function Home() {
         sdk.tips.showError('解锁失败');
       });
   };
+
+  useTitle(sdk.deviceDisplayName);
 
   useLongPress(unlock, document.querySelector('.unlock-btn'), { delay: 1500 });
 

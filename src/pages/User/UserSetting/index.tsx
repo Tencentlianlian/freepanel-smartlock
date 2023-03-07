@@ -2,6 +2,7 @@ import { Cell } from 'qcloud-iot-panel-component';
 import { useParams } from 'react-router-dom';
 import { useUser } from '@src/hooks/useUser';
 import { Picker, DatePicker, Input } from 'antd-mobile';
+import { useTitle } from '@src/hooks/useTitle';
 import { WeekPicker } from '@src/components/WeekPicker';
 import dayjs from 'dayjs';
 import { TimeSpanPicker } from '@src/components/TimeSpanPicker';
@@ -32,6 +33,8 @@ export function UserSetting() {
     }
     return eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>)
   };
+
+  useTitle('用户设置');
 
   useEffect(() => {
     console.log({ eTime });

@@ -163,7 +163,7 @@ module.exports = (env, argv) => {
           autoprefixer: { disable: true },
         },
       }),
-    ],
+    ].filter(Boolean),
     stats: { children: false },
   };
 };
