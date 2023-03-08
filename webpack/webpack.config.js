@@ -43,6 +43,8 @@ module.exports = (env, argv) => {
     },
     externals: {
       'qcloud-iotexplorer-h5-panel-sdk': 'h5PanelSdk',
+      react: 'React',
+      'react-dom': 'ReactDOM',
     },
     devServer: {
       contentBase: distPath,
