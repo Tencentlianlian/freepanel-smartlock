@@ -29,7 +29,7 @@ export function UserSetting() {
 
   const renderWeek = () => {
     if (eTime.week?.length === 7) {
-      return '周一 ～ 周天';
+      return '周一 ～ 周日';
     }
     return eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>)
   };
