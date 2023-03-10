@@ -12,10 +12,12 @@ interface PickerProps<T> {
   onClose?: () => void
 }
 
-export function WeekPicker<T>({ value = [], onChange, onClose, title, options = [], visible }: PickerProps<T>) {
-  const [checked, setChecked] = useState(value);
+export function WeekPicker<T>({ value, onChange, onClose, title, options = [], visible }: PickerProps<T>) {
+  const [checked, setChecked] = useState(value || []);
   useEffect(() => {
-    setChecked(value);
+    if (Array.isArray(value)) {
+      setChecked(value);
+    }
   }, [value]);
 
   const onOptionChange = (option) => {
@@ -41,7 +43,7 @@ export function WeekPicker<T>({ value = [], onChange, onClose, title, options = 
       >
         <div>{opt.label}</div>
         <div
-          className={classNames('iotp-picker-icon',{ checked: checked.indexOf(opt.value) !== -1 })}
+          className={classNames('iotp-picker-icon',{ checked: checked?.indexOf(opt.value) !== -1 })}
           onClick={() => onOptionChange(opt)}
         ></div>
       </div>)

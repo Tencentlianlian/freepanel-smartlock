@@ -38,7 +38,7 @@ module.exports = (env, argv) => {
     },
     output: {
       path: distPath,
-      filename: isDevMode ? '[name].js' : '[name].[contenthash:8].js',
+      filename: isDevMode ? '[name].js' : 'SmartLock.[contenthash:8].js',
       libraryTarget: 'umd'
     },
     externals: {
@@ -158,7 +158,7 @@ module.exports = (env, argv) => {
         'process.env.NODE_ENV': JSON.stringify(mode),
       }),
       new ModifiedMiniCssExtractPlugin({
-        filename: isDevMode ? '[name].css' : '[name].[contenthash:8].css',
+        filename: isDevMode ? '[name].css' : 'SmartLock.[contenthash:8].css',
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {

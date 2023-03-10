@@ -31,7 +31,7 @@ export function UserSetting() {
     if (eTime.week?.length === 7) {
       return '周一 ～ 周日';
     }
-    return eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>)
+    return eTime.week?.map(v => <span key= {v}>{weeks[v]}&nbsp;</span>);
   };
 
   useTitle('用户设置');
