@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
 import { useDeviceInfo } from '@src/hooks';
 import { useTitle } from '@src/hooks/useTitle';
@@ -21,6 +21,17 @@ export function Setting() {
   const [{ deviceData, deviceInfo, templateMap }, { doControlDeviceData }] = useDeviceInfo();
   const { volume } = templateMap;
   const volumeOptions = getDefine(volume);
+  const [hintVisible, setHintVisible] = useState(false);
+
+  useEffect(() => {
+    sdk.requestTokenApi('AppCheckFirmwareUpdate', {
+      ProductId: sdk.productId,
+      DeviceName: sdk.deviceName,
+    }).then(({ CurrentVersion, DstVersion }) => {
+      const isUpgradable = Boolean(DstVersion) && (DstVersion !== CurrentVersion);
+      setHintVisible(isUpgradable);
+    });
+  }, []);
   return <div className='page setting'>
     <CellGroup>
       <Cell
@@ -82,6 +93,8 @@ export function Setting() {
       <Cell
         showArrow
         title="固件升级"
+        footer={hintVisible ? <div className='red-dot' /> : null
+        }
         onClick={() => sdk.checkFirmwareUpgrade()}
       ></Cell>
     </CellGroup>
