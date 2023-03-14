@@ -6,6 +6,9 @@ import { Picker } from 'antd-mobile';
 import './index.less';
 
 const getDefine = (model) => {
+  if (!model) {
+    return [];
+  }
   if (model.define.type !== 'enum' && model.define.type !== 'stringEnum') {
     console.log(model.define.type);
     return [];
@@ -70,21 +73,20 @@ export function Setting() {
         }}
         showArrow
       ></Cell>
-      <Cell
+      {volume && <Cell
         showArrow
         title="音量"
-        footer={volume.define.mapping[deviceData.volume]}
+        footer={volume.define?.mapping[deviceData.volume]}
         onClick={async() => {
           const value = await Picker.prompt({
             columns: [volumeOptions],
             defaultValue: [deviceData.volume + '']
           });
-          console.log('select:', value);
           if (value) {
             doControlDeviceData('volume', Number(value[0]));
           }
         }}
-      ></Cell>
+      ></Cell>}
       <Cell
         showArrow
         title="设备分享"
@@ -95,7 +97,7 @@ export function Setting() {
         title="固件升级"
         footer={hintVisible ? <div className='red-dot' /> : null
         }
-        onClick={() => sdk.checkFirmwareUpgrade()}
+        onClick={() => sdk.firmwareUpgrade.showCheckUpgradeModal({ deviceId: sdk.deviceId })}
       ></Cell>
     </CellGroup>
     <Btn type="default" className="delete-btn"
