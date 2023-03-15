@@ -10,6 +10,7 @@ interface H5PanelSdk {
   requestTokenApi: (apiName: string, payload: any) => Promise<any>;
   callDeviceAction: (payload: any, actionName: string) => Promise<any>;
   tips: Tips;
+  isShareDevice: boolean;
   [key: string]: any;
 }
 interface Window {

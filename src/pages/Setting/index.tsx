@@ -5,7 +5,7 @@ import { useTitle } from '@src/hooks/useTitle';
 import { Picker } from 'antd-mobile';
 import './index.less';
 
-const getDefine = (model) => {
+const getDefine = (model: { define: { type: string; mapping: any; }; }) => {
   if (!model) {
     return [];
   }
@@ -48,17 +48,17 @@ export function Setting() {
         title="设备信息"
         onClick={() => sdk.goDeviceInfoPage()}
       ></Cell>
-      <Cell
+      {!sdk.isShareDevice && <Cell
         showArrow
         title="房间设置"
         onClick={() => sdk.goRoomSettingPage()}
-      ></Cell>
+      ></Cell>}
       <Cell
         title="逗留侦测"
         footer={<Switch size="small"
           checked={!!deviceData.stay_alarm_mode}
           color={'#06f'}
-          onChange={(e) => {
+          onChange={(e: { detail: { value: any; }; }) => {
             console.log('stay_alarm_mode', e);
             doControlDeviceData('stay_alarm_mode',  Number(e.detail.value));
           }}
@@ -87,18 +87,18 @@ export function Setting() {
           }
         }}
       ></Cell>}
-      <Cell
+      {!sdk.isShareDevice && <Cell
         showArrow
         title="设备分享"
         onClick={() => sdk.goShareDevicePage()}
-      ></Cell>
-      <Cell
+      ></Cell>}
+      {!sdk.isShareDevice && <Cell
         showArrow
         title="固件升级"
         footer={hintVisible ? <div className='red-dot' /> : null
         }
         onClick={() => sdk.firmwareUpgrade.showCheckUpgradeModal({ deviceId: sdk.deviceId })}
-      ></Cell>
+      ></Cell>}
     </CellGroup>
     <Btn type="default" className="delete-btn"
       onClick={() => sdk.deleteDevice()}
