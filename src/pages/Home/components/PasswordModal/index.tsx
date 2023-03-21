@@ -39,7 +39,7 @@ export function PasswordModal(props: PasswordModalProps) {
     });
 
   useEffect(() => {
-    if (visible && !singlePassword.password) {
+    if (visible) {
       generatePwd();
     }
   }, [visible]);
