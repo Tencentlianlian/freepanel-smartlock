@@ -32,7 +32,7 @@ interface Log{
   children: LogItem[]
 }
 
-export function Log({ date, logType }) {
+export function Log({ date, logType, style = {} }) {
   const [data, setData] = useState<LogItem[]>([]);
   const [{ templateMap: dataTemplateEventMap }] = useDeviceInfo();
   const alarmTipMap = dataTemplateEventMap.alarm_lock.params[0].define.mapping;
@@ -119,7 +119,7 @@ export function Log({ date, logType }) {
     }
   }, [data, logType]);
   return (
-    <div className="wrapper">
+    <div className="wrapper" style={style}>
       <Timeline items={filteredData.map(item => {
         return {
           title: item.time,

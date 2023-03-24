@@ -34,6 +34,7 @@ export function Home() {
   const [notifyTipShow, setNotifyTipShow] = useState(false); 
   const [pickerVisible, setPickerVisible] = useState(false);
   const floatPanelRefCache = useRef<FloatingPanelRef>();
+  const floatingHeightRef = useRef();
   // actionSheet visible
   const [visible, setVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
@@ -46,7 +47,7 @@ export function Home() {
   const disabledRef = useRef(false);
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
-
+  const maxHeight = 0.9 * window.innerHeight;
 
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
@@ -72,7 +73,17 @@ export function Home() {
         floatPanelRef?.setHeight(minHeight);
       }, 300);
     }
-  }, []);
+    const handleBar = document.querySelector('.adm-floating-panel-bar');
+    const handler = () => {
+      if (floatingHeightRef.current === minHeight) {
+        floatPanelRef?.setHeight(maxHeight);
+      } else {
+        floatPanelRef?.setHeight(minHeight);
+      }
+    };
+    handleBar?.addEventListener('click', handler);
+    return () => handleBar?.removeEventListener('click', handler);
+  }, [minHeight]);
 
   const goVideoPanel = async () => {
     if (offline) {
@@ -152,6 +163,11 @@ export function Home() {
         console.log('解锁失败', err);
         sdk.tips.showError('解锁失败');
       });
+  };
+
+  const handleHeightChange = (height, animating) => {
+    if (animating) return;
+    floatingHeightRef.current = height;
   };
 
   useTitle(sdk.deviceDisplayName);
@@ -262,8 +278,9 @@ export function Home() {
     </div>
 
     <FloatingPanel
-      anchors={[minHeight, 0.9 * window.innerHeight]}
+      anchors={[minHeight, maxHeight]}
       handleDraggingOfContent={false}
+      onHeightChange={handleHeightChange}
       ref={floatPanelRef}
     >
       <div className="log-menu">
@@ -306,7 +323,7 @@ export function Home() {
         />
       </div>
 
-      <Log date={logDate} logType={logType}/>
+      <Log date={logDate} logType={logType} />
     </FloatingPanel>
     <PasswordModal
       visible={pwdModalVisible}
