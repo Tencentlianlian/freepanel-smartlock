@@ -69,8 +69,12 @@
   .card-icon{
     width: 24px;
     height: 24px;
-    &.loading{
-      animation: rotate infinite 0.8s forwards linear;
+    &.lock{
+      background-image: url('../../assets/unlock.svg');
+      &.loading{
+        background-image: url('../../assets/loading.svg');
+        animation: rotate infinite 0.8s forwards linear;
+      }
     }
   }
   .card-list{

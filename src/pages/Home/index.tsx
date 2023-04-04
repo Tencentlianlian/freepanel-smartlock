@@ -13,9 +13,7 @@ import dayjs from 'dayjs';
 import { useTitle } from '@src/hooks/useTitle';
 
 import pwdImg from '../../assets/icon_password.svg';
-import lockImg from '../../assets/unlock.svg';
 import liveImg from '../../assets/live.svg';
-import loadingImg from '../../assets/loading.svg';
 import personImg from '../../assets/person.svg';
 
 
@@ -144,7 +142,8 @@ export function Home() {
     }
   };
 
-  const unlock = () => {
+  const unlock = (e) => {
+    e.preventDefault();
     console.log('unlock');
     if (loading) {
       return;
@@ -253,8 +252,8 @@ export function Home() {
         className="card-btn unlock-btn"
         onClick={console.log}
       >
-        <img src={loading ? loadingImg : lockImg} alt="长按开锁"
-          className={classNames('card-icon', { loading: loading })} />
+        <div className={classNames('card-icon', 'lock', { loading: loading })}>
+        </div>
         <div className="card-btn-title">长按开锁</div>
       </Card>
 
