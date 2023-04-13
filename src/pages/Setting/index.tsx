@@ -103,6 +103,13 @@ export function Setting() {
     <Btn type="default" className="delete-btn"
       onClick={() => sdk.deleteDevice()}
     >{ sdk.isShareDevice ? '移除分享设备' : '删除设备' }</Btn>
-    {/* <Btn type="default" className="delete-btn">解绑设备并清除数据</Btn> */}
+    {!sdk.isShareDevice && sdk.isFamilyOwner && (
+      <Btn type="danger" className="delete-btn"
+        onClick={() => sdk.deleteDevice({ reserveData: false })}
+      >
+        解绑设备并清除数据
+      </Btn>
+    )
+    }
   </div>;
 }
