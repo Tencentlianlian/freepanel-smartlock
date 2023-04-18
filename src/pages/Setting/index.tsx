@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
+import { sdk } from '../User/utils';
 import { useDeviceInfo } from '@src/hooks';
+import { AppContext } from '@src/context';
 import { useTitle } from '@src/hooks/useTitle';
-import { Picker } from 'antd-mobile';
+import { Picker, Popup, Divider } from 'antd-mobile';
 import './index.less';
+import classNames from 'classnames';
 
 const getDefine = (model: { define: { type: string; mapping: any; }; }) => {
   if (!model) {
@@ -20,11 +23,12 @@ const getDefine = (model: { define: { type: string; mapping: any; }; }) => {
 export function Setting() {
   useTitle('设置');
   const CellGroup = Cell.Group;
-  const sdk = window.h5PanelSdk;
   const [{ deviceData, deviceInfo, templateMap }, { doControlDeviceData }] = useDeviceInfo();
   const { volume } = templateMap;
   const volumeOptions = getDefine(volume);
   const [hintVisible, setHintVisible] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const { isForceOnline } = useContext(AppContext);
 
   useEffect(() => {
     sdk.requestTokenApi('AppCheckFirmwareUpdate', {
@@ -73,6 +77,12 @@ export function Setting() {
         }}
         showArrow
       ></Cell>
+      {!isForceOnline && <Cell
+        title="实时画面"
+        footer={deviceData.rt_pic ? '始终开启' : '发生事件时开启'}
+        showArrow
+        onClick={() => setPopupVisible(true)}
+      ></Cell>}
       {volume && <Cell
         showArrow
         title="音量"
@@ -111,5 +121,38 @@ export function Setting() {
       </Btn>
     )
     }
+    <Popup
+      visible={popupVisible}
+      bodyClassName="videoSetting"
+      closeOnMaskClick
+      onClose={() => setPopupVisible(false)}
+    >
+      <div className="popup-title">
+        实时画面设置
+      </div>
+      <div className="picker-item"
+        onClick={() => {
+          doControlDeviceData({
+            rt_pic: false
+          });
+          setPopupVisible(false);
+        }}
+      >
+        <div className={classNames('title', { active: !deviceData.rt_pic })}>发生事件时开启</div>
+        <div>发生安全事件或门铃呼叫时，设备才触发实时画面，持续3分钟</div>
+      </div>
+      <Divider />
+      <div className="picker-item">
+        <div className={classNames('title', { active: deviceData.rt_pic })}
+          onClick={() => {
+            doControlDeviceData({
+              rt_pic: true
+            });
+            setPopupVisible(false);
+          }}
+        >始终开启</div>
+        <div>任何情况下，设备都始终开启实时画面</div>
+      </div>
+    </Popup>
   </div>;
 }

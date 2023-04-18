@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
@@ -11,6 +11,7 @@ import { PasswordModal } from './components/PasswordModal';
 import isToday from 'dayjs/plugin/isToday';
 import dayjs from 'dayjs';
 import { useTitle } from '@src/hooks/useTitle';
+import { AppContext } from '@src/context';
 
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
@@ -33,6 +34,7 @@ export function Home() {
   const [pickerVisible, setPickerVisible] = useState(false);
   const floatPanelRefCache = useRef<FloatingPanelRef>();
   const floatingHeightRef = useRef();
+  const { isForceOnline } = useContext(AppContext);
   // actionSheet visible
   const [visible, setVisible] = useState(false);
   const [logDate, setLogDate] = useState(new Date);
@@ -256,14 +258,15 @@ export function Home() {
         </div>
         <div className="card-btn-title">长按开锁</div>
       </Card>
-
-      <Card
-        className="card-btn"
-        onClick={goVideoPanel}
-      >
-        <img src={liveImg} alt="实时画面" className='card-icon' />
-        <div className="card-btn-title">实时画面</div>
-      </Card>
+      {!isForceOnline &&
+        <Card
+          className="card-btn"
+          onClick={goVideoPanel}
+        >
+          <img src={liveImg} alt="实时画面" className='card-icon' />
+          <div className="card-btn-title">实时画面</div>
+        </Card>
+      }
     </div>
 
     <div>

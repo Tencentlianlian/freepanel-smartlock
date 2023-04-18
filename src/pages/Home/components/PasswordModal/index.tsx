@@ -35,7 +35,7 @@ export function PasswordModal(props: PasswordModalProps) {
   })
     .catch((err) => {
       console.log(err);
-      window.h5PanelSdk.tips.showError(err.msg);
+      sdk.tips.showError(err.msg);
     });
 
   useEffect(() => {

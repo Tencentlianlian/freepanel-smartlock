@@ -150,9 +150,18 @@ export const useDeviceInfo = (): UseDeviceInfoResult => {
     if (typeof idOrDeviceData === 'string') {
       deviceData = { [idOrDeviceData]: typeof value === 'boolean' ? Number(value) : value };
     } else {
-      deviceData = idOrDeviceData;
+      const boolToNum = (data: Record<string, any>) => {
+        return Object.keys(data).reduce((prev, key) => {
+          if (typeof data[key] === 'boolean') {
+            prev[key] = Number(data[key]);
+          } else {
+            prev[key] = data[key];
+          }
+          return prev;
+        }, {});
+      };
+      deviceData = boolToNum(idOrDeviceData);
     }
-
     // 以第一个key为id
     const id = getFirstKey(deviceData);
 
