@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from 'react';
 import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
 import { sdk } from '../User/utils';
 import { useDeviceInfo } from '@src/hooks';
+import { useNavigate } from 'react-router-dom';
+
 import { AppContext } from '@src/context';
 import { useTitle } from '@src/hooks/useTitle';
 import { Picker, Popup, Divider } from 'antd-mobile';
@@ -29,6 +31,8 @@ export function Setting() {
   const [hintVisible, setHintVisible] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const { isForceOnline } = useContext(AppContext);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     sdk.requestTokenApi('AppCheckFirmwareUpdate', {
@@ -39,6 +43,8 @@ export function Setting() {
       setHintVisible(isUpgradable);
     });
   }, []);
+
+
   return <div className='page setting'>
     <CellGroup>
       <Cell
@@ -101,6 +107,11 @@ export function Setting() {
         showArrow
         title="设备分享"
         onClick={() => sdk.goShareDevicePage()}
+      ></Cell>}
+      {!sdk.isShareDevice && sdk.isFamilyOwner && <Cell
+        showArrow
+        title="安全密码"
+        onClick={() => navigate('/unlock-pwd')}
       ></Cell>}
       {!sdk.isShareDevice && <Cell
         showArrow

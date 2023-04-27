@@ -5,7 +5,7 @@ export interface UseDeviceInfoState {
   deviceInfo: any;
   productInfo: any;
   templateMap: any;
-  deviceData: any;
+  deviceData: Record<string, any>;
   eventMap: Record<string, any>;
   statusTip?: { status: 'error' | 'loading' | 'empty' } | null;
 }

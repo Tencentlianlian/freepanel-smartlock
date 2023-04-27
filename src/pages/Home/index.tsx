@@ -12,6 +12,7 @@ import isToday from 'dayjs/plugin/isToday';
 import dayjs from 'dayjs';
 import { useTitle } from '@src/hooks/useTitle';
 import { AppContext } from '@src/context';
+import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
@@ -40,6 +41,7 @@ export function Home() {
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
+  const { isSupport: isSupportRemoteUnlock, unlock_check_code } = useUnlockPwd();
   const [minHeight, setMinheight] = useState(0.1 * window.innerHeight);
   const offline = useOffline({
     checkForceOnline: true
@@ -48,7 +50,7 @@ export function Home() {
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
   const maxHeight = 0.9 * window.innerHeight;
-
+  const showRealTimePic = !isForceOnline && deviceData.rt_pic;
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
       case 'year':
@@ -195,6 +197,12 @@ export function Home() {
   }, []);
 
   useEffect(() => {
+    if (isSupportRemoteUnlock && !unlock_check_code) {
+      navigate('/unlock-pwd');
+    }
+  }, []);
+
+  useEffect(() => {
     const userNode = document.querySelector('.user-cell');
     if (userNode) {
       const { top, height } =  userNode.getBoundingClientRect();
@@ -243,22 +251,32 @@ export function Home() {
     </div>
 
     <div className="card-list">
-      <Card
-        className="card-btn"
-        onClick={() => setPwdNodalVisible(true)}
-      >
-        <img src={pwdImg} alt="临时密码" className='card-icon' />
-        <div className="card-btn-title">临时密码</div>
-      </Card>
-      <Card
+      {(!isSupportRemoteUnlock && !showRealTimePic) ?
+        <Cell
+          icon={<img src={pwdImg} className="card-icon"/>}
+          title="临时密码"
+          className='row-cell'
+          style={{ margin: 0, width: '100%' }}
+          onClick={() => setPwdNodalVisible(true)}
+          showArrow
+        />
+        : <Card
+          className="card-btn"
+          onClick={() => setPwdNodalVisible(true)}
+        >
+          <img src={pwdImg} alt="临时密码" className='card-icon' />
+          <div className="card-btn-title">临时密码</div>
+        </Card>
+      }
+      {isSupportRemoteUnlock && <Card
         className="card-btn unlock-btn"
         onClick={console.log}
       >
         <div className={classNames('card-icon', 'lock', { loading: loading })}>
         </div>
         <div className="card-btn-title">长按开锁</div>
-      </Card>
-      {!isForceOnline &&
+      </Card>}
+      {showRealTimePic ?
         <Card
           className="card-btn"
           onClick={goVideoPanel}
@@ -266,6 +284,7 @@ export function Home() {
           <img src={liveImg} alt="实时画面" className='card-icon' />
           <div className="card-btn-title">实时画面</div>
         </Card>
+        : null
       }
     </div>
 
@@ -273,7 +292,7 @@ export function Home() {
       <Cell
         icon={<img src={personImg} className="card-icon"/>}
         title="用户管理"
-        className='user-cell'
+        className='user-cell row-cell'
         onClick={() => navigate('/user')}
         showArrow
       ></Cell>
