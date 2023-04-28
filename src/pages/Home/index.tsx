@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import { useTitle } from '@src/hooks/useTitle';
 import { AppContext } from '@src/context';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
+import { useVerifyPwd } from './useVerifyPwd';
 
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
@@ -28,6 +29,7 @@ dayjs.extend(isToday);
 
 export function Home() {
   const sdk = window.h5PanelSdk;
+  const verifyPwd = useVerifyPwd();
   const [{ deviceData }] = useDeviceInfo();
   const isUnlock = deviceData.lock_motor_state === 0;
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ export function Home() {
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
-  const { isSupport: isSupportRemoteUnlock, unlock_check_code } = useUnlockPwd();
+  const { isSupport: isSupportRemoteUnlock, unlock_check_code, unlockNeedPwd } = useUnlockPwd();
   const [minHeight, setMinheight] = useState(0.1 * window.innerHeight);
   const offline = useOffline({
     checkForceOnline: true
@@ -146,11 +148,21 @@ export function Home() {
     }
   };
 
-  const unlock = (e) => {
+  const unlock = async (e) => {
     e.preventDefault();
     console.log('unlock');
     if (loading) {
       return;
+    }
+    if (unlockNeedPwd) {
+      try {
+        await verifyPwd();
+      } catch (err) {
+        if (err !== '用户取消') {
+          sdk.tips.showError(err);
+        }
+        return;
+      }
     }
     setLoading(true);
     sdk.callDeviceAction({}, 'unlock_remote')
