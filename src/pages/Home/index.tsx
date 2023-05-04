@@ -150,8 +150,8 @@ export function Home() {
 
   const unlock = async (e) => {
     e.preventDefault();
-    console.log('unlock');
-    if (loading) {
+    console.log('unlock offline', offline);
+    if (loading || offline) {
       return;
     }
     if (unlockNeedPwd) {

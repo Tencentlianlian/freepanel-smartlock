@@ -3,10 +3,10 @@ import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
 import { sdk } from '../User/utils';
 import { useDeviceInfo } from '@src/hooks';
 import { useNavigate } from 'react-router-dom';
-
+import alertSvg from '@src/assets/alert.svg';
 import { AppContext } from '@src/context';
 import { useTitle } from '@src/hooks/useTitle';
-import { Picker, Popup, Divider } from 'antd-mobile';
+import { Picker, Popup, Divider, Dialog } from 'antd-mobile';
 import './index.less';
 import classNames from 'classnames';
 
@@ -156,10 +156,17 @@ export function Setting() {
       <div className="picker-item">
         <div className={classNames('title', { active: deviceData.rt_pic })}
           onClick={() => {
-            doControlDeviceData({
-              rt_pic: true
+            Dialog.confirm({
+              header: <img src={alertSvg} style={{ width: 48, height: 48 }}/>,
+              title: '确认始终开启实时画面吗',
+              content: '电池续航时间将会大幅缩短',
+              onConfirm: async () => {
+                doControlDeviceData({
+                  rt_pic: true
+                });
+                setPopupVisible(false);
+              },
             });
-            setPopupVisible(false);
           }}
         >始终开启</div>
         <div>任何情况下，设备都始终开启实时画面</div>
