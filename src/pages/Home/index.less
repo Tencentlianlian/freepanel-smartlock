@@ -57,6 +57,9 @@
     @top: 15px;
     top: @top;
     right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     &.bottom{
       top: (@top + 40px);
     }
@@ -107,6 +110,9 @@
     display: flex;
     justify-content: space-between;
     gap: 12px;
+    .card-icon{
+      margin-bottom: 12px;
+    }
     .card-btn{
       display: inline-block;
       flex: 1;
@@ -115,8 +121,14 @@
       margin-right: 0;
       height: 88px;
       margin: 0 0 0 0;
-      &-title{
-        margin-top: 12px;
+      &.flex{
+        display: flex;
+        align-items: center;
+        height: 60px;
+        .card-icon{
+          margin-bottom: 0;
+          margin-right: 8px;
+        }
       }
     }
   }

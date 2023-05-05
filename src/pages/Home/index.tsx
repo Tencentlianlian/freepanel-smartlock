@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import './index.less';
 import classNames from 'classnames';
+import { useLocalStorageState } from 'ahooks';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
 import { useDeviceInfo, useOffline } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef, Popover } from 'antd-mobile';
 import { Log } from './components/Log';
 import { useLongPress } from 'ahooks';
 import { PasswordModal } from './components/PasswordModal';
@@ -14,8 +15,8 @@ import { useTitle } from '@src/hooks/useTitle';
 import { AppContext } from '@src/context';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 import { useVerifyPwd } from './useVerifyPwd';
-import bellImg from '@src/assets/bell.gif';
 
+import bellImg from '@src/assets/bell.gif';
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
 import personImg from '../../assets/person.svg';
@@ -44,7 +45,7 @@ export function Home() {
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
-  const { isSupport: isSupportRemoteUnlock, unlock_check_code, unlockNeedPwd } = useUnlockPwd();
+  const { isSupport: isSupportRemoteUnlock, sp_check_code, unlockNeedPwd } = useUnlockPwd();
   const [minHeight, setMinheight] = useState(0.1 * window.innerHeight);
   const offline = useOffline({
     checkForceOnline: true
@@ -53,8 +54,9 @@ export function Home() {
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
   const maxHeight = 0.9 * window.innerHeight;
-  const showRealTimePic = !isForceOnline && deviceData.rt_pic;
+  const showRealTimePic = !isForceOnline && deviceData.rt_pic !== 0;
   const [doorbell, setDoorbell] = useState(false);
+  const [tipVisible, setTipVisible] = useLocalStorageState('user-tip-visible', { defaultValue:  true });
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
       case 'year':
@@ -70,7 +72,7 @@ export function Home() {
 
   const floatPanelRef = useCallback((floatPanelRef: FloatingPanelRef) => {
     floatPanelRefCache.current = floatPanelRef;
-    const userNode = document.querySelector('.user-cell');
+    const userNode = document.querySelector('.card-list');
     if (userNode) {
       setTimeout(() => {
         const { top, height } =  userNode.getBoundingClientRect();
@@ -211,7 +213,7 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    if (isSupportRemoteUnlock && !unlock_check_code) {
+    if (isSupportRemoteUnlock && !sp_check_code) {
       navigate('/unlock-pwd');
     }
     const handler = ({ Payload, deviceId }) => {
@@ -229,7 +231,7 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    const userNode = document.querySelector('.user-cell');
+    const userNode = document.querySelector('.card-list');
     if (userNode) {
       const { top, height } =  userNode.getBoundingClientRect();
       const minHeight = window.innerHeight - top - height - 12;
@@ -258,12 +260,32 @@ export function Home() {
         }}
       >去开启</Button>
     </div>}
-    <span
+    <div
       className={classNames('device-setting',{ bottom: notifyTipShow })}
-      onClick={() => navigate('/setting')}
-    > 
-      <Icon theme="ios" icon="more" />
-    </span>
+    >
+      <span onClick={() => navigate('/setting')}>
+        <Icon theme="ios" icon="more" />
+      </span>
+      <Popover
+        visible={tipVisible}
+        content={
+          <span style={{ fontSize: 14 }}>
+            于此处进行用户管理<br/>
+            <Button color='primary' fill='none' size="mini" style={{ float: 'right', paddingRight: 0 }}
+              onClick={() => setTipVisible(false)}
+            >
+              知道了
+            </Button>
+          </span>
+        }
+        placement={'bottom-end'}
+      >
+        <img src={personImg} className="card-icon"
+          onClick={() => navigate('/user')}
+        />
+      </Popover>
+
+    </div>
 
     <div className={classNames('lock-state',{ 'tip-show': notifyTipShow })}>
       {isUnlock ? <img src="https://qcloudimg.tencent-cloud.cn/raw/7cdaa6cca5e56aa8f8da32d21e621cf3.png" alt="" /> 
@@ -301,7 +323,7 @@ export function Home() {
           showArrow
         />
         : <Card
-          className="card-btn"
+          className={classNames('card-btn', { flex: !showRealTimePic })}
           onClick={() => setPwdNodalVisible(true)}
         >
           <img src={pwdImg} alt="临时密码" className='card-icon' />
@@ -309,7 +331,7 @@ export function Home() {
         </Card>
       }
       {isSupportRemoteUnlock && <Card
-        className="card-btn unlock-btn"
+        className={classNames('card-btn unlock-btn', { flex: !showRealTimePic })}
         onClick={console.log}
       >
         <div className={classNames('card-icon', 'lock', { loading: loading })}>
@@ -318,7 +340,7 @@ export function Home() {
       </Card>}
       {showRealTimePic ?
         <Card
-          className="card-btn"
+          className={classNames('card-btn', { flex: !isSupportRemoteUnlock })}
           onClick={goVideoPanel}
         >
           <img src={liveImg} alt="实时画面" className='card-icon' />
@@ -328,7 +350,7 @@ export function Home() {
       }
     </div>
 
-    <div>
+    {/* <div>
       <Cell
         icon={<img src={personImg} className="card-icon"/>}
         title="用户管理"
@@ -336,7 +358,7 @@ export function Home() {
         onClick={() => navigate('/user')}
         showArrow
       ></Cell>
-    </div>
+    </div> */}
 
     <FloatingPanel
       anchors={[minHeight, maxHeight]}

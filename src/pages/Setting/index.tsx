@@ -63,6 +63,22 @@ export function Setting() {
         title="房间设置"
         onClick={() => sdk.goRoomSettingPage()}
       ></Cell>}
+      {!sdk.isShareDevice && <Cell
+        showArrow
+        title="设备分享"
+        onClick={() => sdk.goShareDevicePage()}
+      ></Cell>}
+    </CellGroup>
+    <CellGroup style={{ marginTop: 12 }}>
+      <Cell
+        title="订阅通知"
+        onClick={() => {
+          sdk._appBridge.callMpApi('navigateTo', {
+            url: `/pages/Device/ConfigWXNotify/ConfigWXNotify?deviceId=${sdk.deviceId}`,
+          });
+        }}
+        showArrow
+      />
       <Cell
         title="逗留侦测"
         footer={<Switch size="small"
@@ -73,25 +89,24 @@ export function Setting() {
             doControlDeviceData('stay_alarm_mode',  Number(e.detail.value));
           }}
         />}
-      ></Cell>
-      <Cell
-        title="订阅通知"
-        onClick={() => {
-          sdk._appBridge.callMpApi('navigateTo', {
-            url: `/pages/Device/ConfigWXNotify/ConfigWXNotify?deviceId=${sdk.deviceId}`,
-          });
-        }}
-        showArrow
-      ></Cell>
+      />
       {!isForceOnline && <Cell
         title="实时画面"
         footer={deviceData.rt_pic ? '始终开启' : '发生事件时开启'}
         showArrow
         onClick={() => setPopupVisible(true)}
       ></Cell>}
+    </CellGroup>
+
+    <CellGroup style={{ marginTop: 12 }}>
+      {!sdk.isShareDevice && sdk.isFamilyOwner && <Cell
+        showArrow
+        title="安全密码"
+        onClick={() => navigate('/unlock-pwd')}
+      ></Cell>}
       {volume && <Cell
         showArrow
-        title="音量"
+        title="设备音量"
         footer={volume.define?.mapping[deviceData.volume]}
         onClick={async() => {
           const value = await Picker.prompt({
@@ -102,16 +117,6 @@ export function Setting() {
             doControlDeviceData('volume', Number(value[0]));
           }
         }}
-      ></Cell>}
-      {!sdk.isShareDevice && <Cell
-        showArrow
-        title="设备分享"
-        onClick={() => sdk.goShareDevicePage()}
-      ></Cell>}
-      {!sdk.isShareDevice && sdk.isFamilyOwner && <Cell
-        showArrow
-        title="安全密码"
-        onClick={() => navigate('/unlock-pwd')}
       ></Cell>}
       {!sdk.isShareDevice && <Cell
         showArrow

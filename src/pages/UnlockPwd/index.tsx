@@ -1,10 +1,9 @@
-import './index.less';
-import { useDeviceInfo } from '@src/hooks';
 import { useState } from 'react';
 import { Cell,  Btn } from 'qcloud-iot-panel-component';
 import { Input } from 'antd-mobile';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 import { getSign } from '@src/models';
+import './index.less';
 
 enum Action {
   Add = 0,
@@ -17,16 +16,16 @@ export function UnlockPwd() {
   const [pwd, setPwd] = useState('');
   const [pwd2, setPwd2] = useState('');
   const [loading, setLoading] = useState(false);
-  const { unlock_check_code } = useUnlockPwd();
+  const { sp_check_code } = useUnlockPwd();
 
   const verify = async () => {
-    if (unlock_check_code) {
+    if (sp_check_code) {
       if (!oldPwd) {
         sdk.tips.showError('请填写旧密码');
         return false;
       }
       const sign = await getSign(oldPwd);
-      if (sign !== unlock_check_code) {
+      if (sign !== sp_check_code) {
         sdk.tips.showError('旧密码填写错误');
         return false;
       }
@@ -50,7 +49,7 @@ export function UnlockPwd() {
     const sign = await getSign(pwd);
     try {
       const res = await sdk.callDeviceAction({
-        check_code: sign,
+        sp_check_code: sign,
         action_type: Action.Add
       }, 'set_safe_pwd', sdk.deviceId);
       sdk.tips.showSuccess('密码设置成功');
@@ -69,7 +68,7 @@ export function UnlockPwd() {
     const sign = await getSign(pwd);
     try {
       const res = await sdk.callDeviceAction({
-        check_code: sign,
+        sp_check_code: sign,
         action_type: Action.Add
       }, 'set_safe_pwd', sdk.deviceId);
       sdk.tips.showSuccess('密码设置成功');
@@ -86,7 +85,7 @@ export function UnlockPwd() {
       <div className="desc">用于远程开锁或查看敏感信息</div>
     </div>
     <Cell.Group>
-      {unlock_check_code && <Cell
+      {sp_check_code && <Cell
         title="旧安全密码"
         footer={
           <Input
@@ -101,7 +100,7 @@ export function UnlockPwd() {
         }
       />}
       <Cell
-        title={unlock_check_code ? '新安全密码' : '安全密码'}
+        title={sp_check_code ? '新安全密码' : '安全密码'}
         footer={
           <Input
             type="password"
@@ -136,7 +135,7 @@ export function UnlockPwd() {
     </div>
     <div className="btn-wrapper">
       <Btn type="primary"
-        onClick={() => unlock_check_code ? updatePwd() : savePwd()}
+        onClick={() => sp_check_code ? updatePwd() : savePwd()}
         disabled={loading}
       >
         保 存

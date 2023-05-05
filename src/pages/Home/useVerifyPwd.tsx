@@ -34,7 +34,7 @@ const PwdInput = React.forwardRef((props, ref) => {
 
 export const useVerifyPwd = () => {
   const ref = useRef<{ getPwd: () => string }>();
-  const { unlock_check_code } = useUnlockPwd();
+  const { sp_check_code } = useUnlockPwd();
   const verifyPwd = () => {
     return new Promise((reslove, reject) => {
       Dialog.confirm({
@@ -50,7 +50,7 @@ export const useVerifyPwd = () => {
             reject('请输入正确的密码');
           }
           const sign = await getSign(pwd);
-          if (sign !== unlock_check_code) {
+          if (sign !== sp_check_code) {
             reject('密码不正确');
           }
           reslove(true);
