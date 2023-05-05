@@ -103,6 +103,12 @@ module.exports = (env, argv) => {
           ],
         },
         {
+          test: /\.gif$/,
+          use: [
+            'url-loader'
+          ],
+        },
+        {
           test: /\.(le|c)ss$/,
           use: [
             MiniCssExtractPlugin.loader,

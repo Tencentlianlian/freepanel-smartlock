@@ -14,6 +14,7 @@ import { useTitle } from '@src/hooks/useTitle';
 import { AppContext } from '@src/context';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 import { useVerifyPwd } from './useVerifyPwd';
+import bellImg from '@src/assets/bell.gif';
 
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
@@ -53,6 +54,7 @@ export function Home() {
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
   const maxHeight = 0.9 * window.innerHeight;
   const showRealTimePic = !isForceOnline && deviceData.rt_pic;
+  const [doorbell, setDoorbell] = useState(false);
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
       case 'year':
@@ -212,6 +214,18 @@ export function Home() {
     if (isSupportRemoteUnlock && !unlock_check_code) {
       navigate('/unlock-pwd');
     }
+    const handler = ({ Payload, deviceId }) => {
+      if (deviceId === sdk.deviceId) {
+        console.log('wsEventReport', Payload);
+        if (Payload.eventId === 'doorbell') {
+          setDoorbell(true);
+        }
+      }
+    };
+    sdk.on('wsEventReport', handler);
+    return () => {
+      sdk.off('wsEventReport', handler);
+    };
   }, []);
 
   useEffect(() => {
@@ -222,7 +236,7 @@ export function Home() {
       setMinheight(minHeight);
       floatPanelRefCache.current?.setHeight(minHeight);
     }
-  }, [notifyTipShow]);
+  }, [notifyTipShow, doorbell]);
 
   return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
@@ -261,6 +275,20 @@ export function Home() {
         <div className='lock-label'>{isUnlock ? <span style={{ color: '#FA5151' }}>已开锁</span> : '已关锁'}</div>
       </div>
     </div>
+
+    { doorbell && <div className="doorbell-link"
+      onClick={goVideoPanel}
+    >
+      <div className='bell-left'>
+        <img src={bellImg} />  
+        画面实时中
+      </div>
+      <div>有人按门铃 
+        <Icon icon="arrow-forward" theme="ios" color="#fff"
+          size={16}
+        />
+      </div>
+    </div>}
 
     <div className="card-list">
       {(!isSupportRemoteUnlock && !showRealTimePic) ?

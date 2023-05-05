@@ -10,7 +10,7 @@ export function useUnlockPwd(): {
   return {
     unlock_check_code,
     isSupport: unlock_remote_config?.is_support === 1,
-    unlockNeedPwd: unlock_remote_config?.is_support === 1,
+    unlockNeedPwd: unlock_remote_config?.switch_pwd === 1,
   };
 }
 
