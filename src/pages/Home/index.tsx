@@ -3,7 +3,7 @@ import './index.less';
 import classNames from 'classnames';
 import { useLocalStorageState } from 'ahooks';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
-import { useDeviceInfo, useOffline } from '../../hooks';
+import { useDeviceInfo, useOffline, useDoorbellDuration } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef, Popover } from 'antd-mobile';
 import { Log } from './components/Log';
@@ -55,8 +55,8 @@ export function Home() {
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
   const maxHeight = 0.9 * window.innerHeight;
   const showRealTimePic = !isForceOnline && deviceData.rt_pic !== 0;
-  const [doorbell, setDoorbell] = useState(false);
-  const [tipVisible, setTipVisible] = useLocalStorageState('user-tip-visible', { defaultValue:  true });
+  const { doorbell } = useDoorbellDuration();
+  const [tipVisible, setTipVisible] = useLocalStorageState(`${sdk.deviceId}-user-tip-visible`, { defaultValue:  true });
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
       case 'year':
@@ -212,25 +212,7 @@ export function Home() {
     });
   }, []);
 
-  useEffect(() => {
-    if (isSupportRemoteUnlock && !sp_check_code) {
-      navigate('/unlock-pwd');
-    }
-    const handler = ({ Payload, deviceId }) => {
-      if (deviceId === sdk.deviceId) {
-        console.log('wsEventReport', Payload);
-        if (Payload.eventId === 'doorbell') {
-          setDoorbell(true);
-        }
-      }
-    };
-    sdk.on('wsEventReport', handler);
-    return () => {
-      sdk.off('wsEventReport', handler);
-    };
-  }, []);
-
-  useEffect(() => {
+  const resetFloatPanelHeight = () => {
     const userNode = document.querySelector('.card-list');
     if (userNode) {
       const { top, height } =  userNode.getBoundingClientRect();
@@ -238,7 +220,27 @@ export function Home() {
       setMinheight(minHeight);
       floatPanelRefCache.current?.setHeight(minHeight);
     }
+  };
+
+  useEffect(() => {
+    resetFloatPanelHeight();
   }, [notifyTipShow, doorbell]);
+
+  useEffect(() => {
+    // 选择需要观察变动的节点
+    const targetNode = document.querySelector('.card-list') as HTMLDivElement;
+
+    // 观察器的配置（需要观察什么变动）
+    const config = { childList: true, subtree: true };
+
+    // 创建一个观察器实例并传入回调函数
+    const observer = new MutationObserver(resetFloatPanelHeight);
+
+    // 以上述配置开始观察目标节点
+    observer.observe(targetNode, config);
+
+    return () => observer.disconnect();
+  }, []);
 
   return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
@@ -314,6 +316,7 @@ export function Home() {
 
     <div className="card-list">
       {(!isSupportRemoteUnlock && !showRealTimePic) ?
+        // 两个都不支持就占满
         <Cell
           icon={<img src={pwdImg} className="card-icon"/>}
           title="临时密码"
@@ -323,7 +326,7 @@ export function Home() {
           showArrow
         />
         : <Card
-          className={classNames('card-btn', { flex: !showRealTimePic })}
+          className={classNames('card-btn', { flex: !showRealTimePic || !isSupportRemoteUnlock })}
           onClick={() => setPwdNodalVisible(true)}
         >
           <img src={pwdImg} alt="临时密码" className='card-icon' />

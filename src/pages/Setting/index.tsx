@@ -8,6 +8,7 @@ import { AppContext } from '@src/context';
 import { useTitle } from '@src/hooks/useTitle';
 import { Picker, Popup, Divider, Dialog } from 'antd-mobile';
 import './index.less';
+import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 import classNames from 'classnames';
 
 const getDefine = (model: { define: { type: string; mapping: any; }; }) => {
@@ -32,6 +33,7 @@ export function Setting() {
   const [popupVisible, setPopupVisible] = useState(false);
   const { isForceOnline } = useContext(AppContext);
   const navigate = useNavigate();
+  // const { unlockNeedPwd } = useUnlockPwd();
 
 
   useEffect(() => {
@@ -128,15 +130,20 @@ export function Setting() {
     </CellGroup>
     <Btn type="default" className="delete-btn"
       onClick={() => sdk.deleteDevice()}
-    >{ sdk.isShareDevice ? '移除分享设备' : '删除设备' }</Btn>
-    {!sdk.isShareDevice && sdk.isFamilyOwner && (
-      <Btn type="danger" className="delete-btn"
-        onClick={() => sdk.deleteDevice({ reserveData: false })}
-      >
-        解绑设备并清除数据
-      </Btn>
-    )
+    >
+      { sdk.isShareDevice ? '移除分享设备' : '删除设备' }
+    </Btn>
+    {
+      !sdk.isShareDevice && sdk.isFamilyOwner &&
+      (
+        <Btn type="danger" className="delete-btn"
+          onClick={() => sdk.deleteDevice({ reserveData: false })}
+        >
+            解绑设备并清除数据
+        </Btn>
+      )
     }
+
     <Popup
       visible={popupVisible}
       bodyClassName="videoSetting"

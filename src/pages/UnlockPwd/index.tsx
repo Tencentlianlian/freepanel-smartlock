@@ -140,6 +140,14 @@ export function UnlockPwd() {
       >
         保 存
       </Btn>
+      { !sp_check_code && <Btn
+        type="default"
+        style={{ marginTop: '12px' }}
+        onClick={() => sdk.deleteDevice()}
+      >
+        { sdk.isShareDevice ? '移除分享设备' : '删除设备' }
+      </Btn>
+      }
     </div>
   </div>;
 }
