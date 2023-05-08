@@ -212,9 +212,10 @@ export function Home() {
     });
   }, []);
 
+  // 如果要求设置开锁密码，就跳转到设置页面
   useEffect(() => {
-    if (isSupportRemoteUnlock && !sp_check_code) {
-      navigate('/unlock-pwd');
+    if (isSupportRemoteUnlock && unlockNeedPwd && !sp_check_code) {
+      navigate('/unlock-pwd', { replace: true });
     }
   }, []);
 
@@ -324,7 +325,7 @@ export function Home() {
       {(!isSupportRemoteUnlock && !showRealTimePic) ?
         // 两个都不支持就占满
         <Cell
-          icon={<img src={pwdImg} className="card-icon"/>}
+          icon={<img src={pwdImg} className="card-icon" style={{ marginBottom: 0 }}/>}
           title="临时密码"
           className='row-cell'
           style={{ margin: 0, width: '100%' }}
