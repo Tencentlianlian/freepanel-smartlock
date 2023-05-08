@@ -212,6 +212,12 @@ export function Home() {
     });
   }, []);
 
+  useEffect(() => {
+    if (isSupportRemoteUnlock && !sp_check_code) {
+      navigate('/unlock-pwd');
+    }
+  }, []);
+
   const resetFloatPanelHeight = () => {
     const userNode = document.querySelector('.card-list');
     if (userNode) {
