@@ -2,10 +2,13 @@ import { useEffect, useState, useContext } from 'react';
 import { Cell, Switch, Btn } from 'qcloud-iot-panel-component';
 import { sdk } from '../User/utils';
 import { useDeviceInfo } from '@src/hooks';
+import { useNavigate } from 'react-router-dom';
+import alertSvg from '@src/assets/alert.svg';
 import { AppContext } from '@src/context';
 import { useTitle } from '@src/hooks/useTitle';
-import { Picker, Popup, Divider } from 'antd-mobile';
+import { Picker, Popup, Divider, Dialog } from 'antd-mobile';
 import './index.less';
+import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
 import classNames from 'classnames';
 
 const getDefine = (model: { define: { type: string; mapping: any; }; }) => {
@@ -29,6 +32,9 @@ export function Setting() {
   const [hintVisible, setHintVisible] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const { isForceOnline } = useContext(AppContext);
+  const navigate = useNavigate();
+  // const { unlockNeedPwd } = useUnlockPwd();
+
 
   useEffect(() => {
     sdk.requestTokenApi('AppCheckFirmwareUpdate', {
@@ -39,6 +45,8 @@ export function Setting() {
       setHintVisible(isUpgradable);
     });
   }, []);
+
+
   return <div className='page setting'>
     <CellGroup>
       <Cell
@@ -57,6 +65,22 @@ export function Setting() {
         title="房间设置"
         onClick={() => sdk.goRoomSettingPage()}
       ></Cell>}
+      {!sdk.isShareDevice && <Cell
+        showArrow
+        title="设备分享"
+        onClick={() => sdk.goShareDevicePage()}
+      ></Cell>}
+    </CellGroup>
+    <CellGroup style={{ marginTop: 12 }}>
+      <Cell
+        title="订阅通知"
+        onClick={() => {
+          sdk._appBridge.callMpApi('navigateTo', {
+            url: `/pages/Device/ConfigWXNotify/ConfigWXNotify?deviceId=${sdk.deviceId}`,
+          });
+        }}
+        showArrow
+      />
       <Cell
         title="逗留侦测"
         footer={<Switch size="small"
@@ -67,25 +91,24 @@ export function Setting() {
             doControlDeviceData('stay_alarm_mode',  Number(e.detail.value));
           }}
         />}
-      ></Cell>
-      <Cell
-        title="订阅通知"
-        onClick={() => {
-          sdk._appBridge.callMpApi('navigateTo', {
-            url: `/pages/Device/ConfigWXNotify/ConfigWXNotify?deviceId=${sdk.deviceId}`,
-          });
-        }}
-        showArrow
-      ></Cell>
+      />
       {!isForceOnline && <Cell
         title="实时画面"
         footer={deviceData.rt_pic ? '始终开启' : '发生事件时开启'}
         showArrow
         onClick={() => setPopupVisible(true)}
       ></Cell>}
+    </CellGroup>
+
+    <CellGroup style={{ marginTop: 12 }}>
+      {!sdk.isShareDevice && sdk.isFamilyOwner && <Cell
+        showArrow
+        title="安全密码"
+        onClick={() => navigate('/unlock-pwd')}
+      ></Cell>}
       {volume && <Cell
         showArrow
-        title="音量"
+        title="设备音量"
         footer={volume.define?.mapping[deviceData.volume]}
         onClick={async() => {
           const value = await Picker.prompt({
@@ -99,11 +122,6 @@ export function Setting() {
       ></Cell>}
       {!sdk.isShareDevice && <Cell
         showArrow
-        title="设备分享"
-        onClick={() => sdk.goShareDevicePage()}
-      ></Cell>}
-      {!sdk.isShareDevice && <Cell
-        showArrow
         title="固件升级"
         footer={hintVisible ? <div className='red-dot' /> : null
         }
@@ -112,15 +130,20 @@ export function Setting() {
     </CellGroup>
     <Btn type="default" className="delete-btn"
       onClick={() => sdk.deleteDevice()}
-    >{ sdk.isShareDevice ? '移除分享设备' : '删除设备' }</Btn>
-    {!sdk.isShareDevice && sdk.isFamilyOwner && (
-      <Btn type="danger" className="delete-btn"
-        onClick={() => sdk.deleteDevice({ reserveData: false })}
-      >
-        解绑设备并清除数据
-      </Btn>
-    )
+    >
+      { sdk.isShareDevice ? '移除分享设备' : '删除设备' }
+    </Btn>
+    {
+      !sdk.isShareDevice && sdk.isFamilyOwner &&
+      (
+        <Btn type="danger" className="delete-btn"
+          onClick={() => sdk.deleteDevice({ reserveData: false })}
+        >
+            解绑设备并清除数据
+        </Btn>
+      )
     }
+
     <Popup
       visible={popupVisible}
       bodyClassName="videoSetting"
@@ -145,10 +168,17 @@ export function Setting() {
       <div className="picker-item">
         <div className={classNames('title', { active: deviceData.rt_pic })}
           onClick={() => {
-            doControlDeviceData({
-              rt_pic: true
+            Dialog.confirm({
+              header: <img src={alertSvg} style={{ width: 48, height: 48 }}/>,
+              title: '确认始终开启实时画面吗',
+              content: '电池续航时间将会大幅缩短',
+              onConfirm: async () => {
+                doControlDeviceData({
+                  rt_pic: true
+                });
+                setPopupVisible(false);
+              },
             });
-            setPopupVisible(false);
           }}
         >始终开启</div>
         <div>任何情况下，设备都始终开启实时画面</div>

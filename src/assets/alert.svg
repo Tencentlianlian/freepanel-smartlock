@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" class="design-iconfont">
+  <path opacity=".01" fill="#fff" d="M0 0H96V96H0z"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M47.5062 88C70.0919 88 88 70.0919 88 48.4938C88 25.9081 70.0919 8 47.5062 8C25.9081 8 8 25.9081 8 48.4938C8 70.0919 25.9081 88 47.5062 88ZM47.5062 12C67.8827 12 84 28.1173 84 48.4938C84 68.0187 67.7438 84 47.5062 84C28.1173 84 12 67.8827 12 48.4938C12 28.2562 27.9813 12 47.5062 12Z" fill="#FF9C19"/>
+  <path fill="#FF9C19" d="M46 24H50V57H46z"/>
+  <path fill="#FF9C19" d="M46 62H50V66H46z"/>
+</svg>

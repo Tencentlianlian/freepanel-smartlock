@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { Home, Password, Setting } from './pages';
+import { Home, Password, Setting, UnlockPwd } from './pages';
 import { UserList } from './pages/User/UserList';
 import { AppContext } from './context';
 import 'qcloud-iot-panel-component/lib/index.css';
@@ -29,6 +29,10 @@ const router = createHashRouter([
     element: <UserList />,
   },
   {
+    path: '/unlock-pwd',
+    element: <UnlockPwd />,
+  },
+  {
     path: '/user/*',
     children: routeChildren
   },
@@ -36,7 +40,9 @@ const router = createHashRouter([
 
 function App() {
   return <AppContext.Provider value={{
-    isForceOnline: false
+    isForceOnline: false,
+    isSupportRemoteUnlock: false,
+    isNeedPwd: false
   }}>
     <RouterProvider router={router} />
   </AppContext.Provider>;

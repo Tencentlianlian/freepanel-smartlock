@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import './index.less';
 import classNames from 'classnames';
+import { useLocalStorageState } from 'ahooks';
 import { Battery, Card, Cell, Icon, } from 'qcloud-iot-panel-component';
-import { useDeviceInfo, useOffline } from '../../hooks';
+import { useDeviceInfo, useOffline, useDoorbellDuration } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef } from 'antd-mobile';
+import { FloatingPanel, DatePicker, Button, ActionSheet, Toast, FloatingPanelRef, Popover } from 'antd-mobile';
 import { Log } from './components/Log';
 import { useLongPress } from 'ahooks';
 import { PasswordModal } from './components/PasswordModal';
@@ -12,7 +13,10 @@ import isToday from 'dayjs/plugin/isToday';
 import dayjs from 'dayjs';
 import { useTitle } from '@src/hooks/useTitle';
 import { AppContext } from '@src/context';
+import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
+import { useVerifyPwd } from './useVerifyPwd';
 
+import bellImg from '@src/assets/bell.gif';
 import pwdImg from '../../assets/icon_password.svg';
 import liveImg from '../../assets/live.svg';
 import personImg from '../../assets/person.svg';
@@ -27,6 +31,7 @@ dayjs.extend(isToday);
 
 export function Home() {
   const sdk = window.h5PanelSdk;
+  const verifyPwd = useVerifyPwd();
   const [{ deviceData }] = useDeviceInfo();
   const isUnlock = deviceData.lock_motor_state === 0;
   const navigate = useNavigate();
@@ -40,6 +45,7 @@ export function Home() {
   const [logDate, setLogDate] = useState(new Date);
   const [logType, setLogType] = useState('all');
   const [loading, setLoading] = useState(false);
+  const { isSupport: isSupportRemoteUnlock, sp_check_code, unlockNeedPwd } = useUnlockPwd();
   const [minHeight, setMinheight] = useState(0.1 * window.innerHeight);
   const offline = useOffline({
     checkForceOnline: true
@@ -48,7 +54,9 @@ export function Home() {
   const videoDeviceId = sdk.deviceId;
   const [pwdModalVisible, setPwdNodalVisible] = useState(false);
   const maxHeight = 0.9 * window.innerHeight;
-
+  const showRealTimePic = !isForceOnline && deviceData.rt_pic !== 0;
+  const { doorbell } = useDoorbellDuration();
+  const [tipVisible, setTipVisible] = useLocalStorageState(`${sdk.deviceId}-user-tip-visible`, { defaultValue:  true });
   const labelRenderer = useCallback((type: string, data: number) => {
     switch (type) {
       case 'year':
@@ -64,7 +72,7 @@ export function Home() {
 
   const floatPanelRef = useCallback((floatPanelRef: FloatingPanelRef) => {
     floatPanelRefCache.current = floatPanelRef;
-    const userNode = document.querySelector('.user-cell');
+    const userNode = document.querySelector('.card-list');
     if (userNode) {
       setTimeout(() => {
         const { top, height } =  userNode.getBoundingClientRect();
@@ -144,11 +152,21 @@ export function Home() {
     }
   };
 
-  const unlock = (e) => {
+  const unlock = async (e) => {
     e.preventDefault();
-    console.log('unlock');
-    if (loading) {
+    console.log('unlock offline', offline);
+    if (loading || offline) {
       return;
+    }
+    if (unlockNeedPwd) {
+      try {
+        await verifyPwd();
+      } catch (err) {
+        if (err !== '用户取消') {
+          sdk.tips.showError(err);
+        }
+        return;
+      }
     }
     setLoading(true);
     sdk.callDeviceAction({}, 'unlock_remote')
@@ -194,15 +212,42 @@ export function Home() {
     });
   }, []);
 
+  // 如果要求设置开锁密码，就跳转到设置页面
   useEffect(() => {
-    const userNode = document.querySelector('.user-cell');
+    if (isSupportRemoteUnlock && unlockNeedPwd && !sp_check_code) {
+      navigate('/unlock-pwd', { replace: true });
+    }
+  }, []);
+
+  const resetFloatPanelHeight = () => {
+    const userNode = document.querySelector('.card-list');
     if (userNode) {
       const { top, height } =  userNode.getBoundingClientRect();
       const minHeight = window.innerHeight - top - height - 12;
       setMinheight(minHeight);
       floatPanelRefCache.current?.setHeight(minHeight);
     }
-  }, [notifyTipShow]);
+  };
+
+  useEffect(() => {
+    resetFloatPanelHeight();
+  }, [notifyTipShow, doorbell]);
+
+  useEffect(() => {
+    // 选择需要观察变动的节点
+    const targetNode = document.querySelector('.card-list') as HTMLDivElement;
+
+    // 观察器的配置（需要观察什么变动）
+    const config = { childList: true, subtree: true };
+
+    // 创建一个观察器实例并传入回调函数
+    const observer = new MutationObserver(resetFloatPanelHeight);
+
+    // 以上述配置开始观察目标节点
+    observer.observe(targetNode, config);
+
+    return () => observer.disconnect();
+  }, []);
 
   return <div className={classNames('page home-page', { unlock: isUnlock })}>
     {notifyTipShow && <div className="notify-tip"
@@ -224,12 +269,32 @@ export function Home() {
         }}
       >去开启</Button>
     </div>}
-    <span
+    <div
       className={classNames('device-setting',{ bottom: notifyTipShow })}
-      onClick={() => navigate('/setting')}
-    > 
-      <Icon theme="ios" icon="more" />
-    </span>
+    >
+      <span onClick={() => navigate('/setting')}>
+        <Icon theme="ios" icon="more" />
+      </span>
+      <Popover
+        visible={tipVisible}
+        content={
+          <span style={{ fontSize: 14 }}>
+            于此处进行用户管理<br/>
+            <Button color='primary' fill='none' size="mini" style={{ float: 'right', paddingRight: 0 }}
+              onClick={() => setTipVisible(false)}
+            >
+              知道了
+            </Button>
+          </span>
+        }
+        placement={'bottom-end'}
+      >
+        <img src={personImg} className="card-icon"
+          onClick={() => navigate('/user')}
+        />
+      </Popover>
+
+    </div>
 
     <div className={classNames('lock-state',{ 'tip-show': notifyTipShow })}>
       {isUnlock ? <img src="https://qcloudimg.tencent-cloud.cn/raw/7cdaa6cca5e56aa8f8da32d21e621cf3.png" alt="" /> 
@@ -242,42 +307,68 @@ export function Home() {
       </div>
     </div>
 
+    { doorbell && <div className="doorbell-link"
+      onClick={goVideoPanel}
+    >
+      <div className='bell-left'>
+        <img src={bellImg} />  
+        画面实时中
+      </div>
+      <div>有人按门铃 
+        <Icon icon="arrow-forward" theme="ios" color="#fff"
+          size={16}
+        />
+      </div>
+    </div>}
+
     <div className="card-list">
-      <Card
-        className="card-btn"
-        onClick={() => setPwdNodalVisible(true)}
-      >
-        <img src={pwdImg} alt="临时密码" className='card-icon' />
-        <div className="card-btn-title">临时密码</div>
-      </Card>
-      <Card
-        className="card-btn unlock-btn"
+      {(!isSupportRemoteUnlock && !showRealTimePic) ?
+        // 两个都不支持就占满
+        <Cell
+          icon={<img src={pwdImg} className="card-icon" style={{ marginBottom: 0 }}/>}
+          title="临时密码"
+          className='row-cell'
+          style={{ margin: 0, width: '100%' }}
+          onClick={() => setPwdNodalVisible(true)}
+          showArrow
+        />
+        : <Card
+          className={classNames('card-btn', { flex: !showRealTimePic || !isSupportRemoteUnlock })}
+          onClick={() => setPwdNodalVisible(true)}
+        >
+          <img src={pwdImg} alt="临时密码" className='card-icon' />
+          <div className="card-btn-title">临时密码</div>
+        </Card>
+      }
+      {isSupportRemoteUnlock && <Card
+        className={classNames('card-btn unlock-btn', { flex: !showRealTimePic })}
         onClick={console.log}
       >
         <div className={classNames('card-icon', 'lock', { loading: loading })}>
         </div>
         <div className="card-btn-title">长按开锁</div>
-      </Card>
-      {!isForceOnline &&
+      </Card>}
+      {showRealTimePic ?
         <Card
-          className="card-btn"
+          className={classNames('card-btn', { flex: !isSupportRemoteUnlock })}
           onClick={goVideoPanel}
         >
           <img src={liveImg} alt="实时画面" className='card-icon' />
           <div className="card-btn-title">实时画面</div>
         </Card>
+        : null
       }
     </div>
 
-    <div>
+    {/* <div>
       <Cell
         icon={<img src={personImg} className="card-icon"/>}
         title="用户管理"
-        className='user-cell'
+        className='user-cell row-cell'
         onClick={() => navigate('/user')}
         showArrow
       ></Cell>
-    </div>
+    </div> */}
 
     <FloatingPanel
       anchors={[minHeight, maxHeight]}

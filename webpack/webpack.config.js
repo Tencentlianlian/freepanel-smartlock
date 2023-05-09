@@ -59,7 +59,7 @@ module.exports = (env, argv) => {
       open: {
         newInstance: false
       },
-      openPage: `https://iot.cloud.tencent.com/h5panel/developing?productId=${productId}&deviceName=${deviceName}`,
+      openPage: `https://iot.cloud.tencent.com/h5panel/developing?productId=${productId}&deviceName=${deviceName}&sw=true`,
     },
     module: {
       // 现在的 babel 配置已经很简单了，我们只需要加入默认的配置即可
@@ -100,6 +100,12 @@ module.exports = (env, argv) => {
                 plugins: [{ removeTitle: true }, { convertStyleToAttrs: true }],
               },
             },
+          ],
+        },
+        {
+          test: /\.gif$/,
+          use: [
+            'url-loader'
           ],
         },
         {
