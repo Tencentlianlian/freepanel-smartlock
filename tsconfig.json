@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "types": ["qcloud-iotexplorer-h5-panel-sdk-type"],
     "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
