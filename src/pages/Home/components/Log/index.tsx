@@ -17,10 +17,14 @@ const eventMap: Record<string, string> = {
   unlock_temporary_password: '临时密码解锁',
   unlock_onetime_password: '临时密码解锁',
   unlock_cycle_password: '周期密码解锁',
-  add_fingerprint_result: '上报指纹添加成功',
-  add_password_result: '上报密码添加成功',
-  add_card_result: '上报卡片添加成功',
-  add_face_result: '上报人脸添加成功',
+  add_fingerprint_result: '指纹添加成功',
+  add_password_result: '密码添加成功',
+  add_card_result: '卡片添加成功',
+  add_face_result: '面容ID添加成功',
+  del_fingerprint_result: '指纹删除成功',
+  del_password_result: '密码删除成功',
+  del_card_result: '卡片删除成功',
+  del_face_result: '面容ID删除成功',
   door_locked: '门已上锁',
   open_inside: '门从内侧打开',
   unlock_remote_result: '远程解锁',
@@ -34,7 +38,7 @@ interface Log{
 
 export function Log({ date, logType, style = {} }) {
   const [data, setData] = useState<LogItem[]>([]);
-  const [{ templateMap: dataTemplateEventMap }] = useDeviceInfo();
+  const [{ templateMap: dataTemplateEventMap, deviceData }] = useDeviceInfo();
   const alarmTipMap = dataTemplateEventMap.alarm_lock.params[0].define.mapping;
   const sdk = window.h5PanelSdk;
   const [isLoaded, setLoaded] = useState(false);
@@ -77,8 +81,8 @@ export function Log({ date, logType, style = {} }) {
   const { loadMore, hasMore, reset } = useLoadMore(loadLog);
   const renderLabelNode = ({ label, data, event }: LogItem) => {
     let labelNode: React.ReactNode = label;
-    switch (label) {
-      case '门锁告警':
+    switch (event) {
+      case 'alarm_lock':
         labelNode = (
           <div>{label}: <span className='adm-step-description'>
             {alarmTipMap[data.alarm_tip]}
@@ -86,14 +90,28 @@ export function Log({ date, logType, style = {} }) {
           </div>
         );
         break;
-      case '指纹解锁':
-      case '卡片解锁':
-      case '密码解锁':
-      case '人脸解锁': {
+      case 'unlock_fingerprint':
+      case 'unlock_card':
+      case 'unlock_password':
+      case 'unlock_face': {
         // id可能是由name+分隔符+id构成的字符串
         const [id, name] = data.id.split(SPLIT_STR);
         if (name) {
           labelNode = `${name}使用${label}`;
+        }
+      }
+        break;
+      case 'add_fingerprint_result':
+      case 'add_card_result':
+      case 'add_password_result':
+      case 'add_face_result': 
+      case 'del_fingerprint_result':
+      case 'del_card_result':
+      case 'del_password_result':
+      case 'del_face_result': {
+        const user = (deviceData.users || []).find(item => item.userid === data.userid) ;
+        if (user?.name) {
+          labelNode = `${user.name}${label}`;
         }
       }
         break;
