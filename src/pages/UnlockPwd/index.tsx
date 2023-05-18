@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Cell,  Btn } from 'qcloud-iot-panel-component';
 import { Input } from 'antd-mobile';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
+import { useNavigate } from 'react-router-dom';
 import { getSign } from '@src/models';
 import './index.less';
 
@@ -17,7 +18,7 @@ export function UnlockPwd() {
   const [pwd2, setPwd2] = useState('');
   const [loading, setLoading] = useState(false);
   const { sp_check_code } = useUnlockPwd();
-
+  const navigate = useNavigate();
   const verify = async () => {
     if (sp_check_code) {
       if (!oldPwd) {
@@ -53,6 +54,7 @@ export function UnlockPwd() {
         action_type: Action.Add
       }, 'set_safe_pwd', sdk.deviceId);
       sdk.tips.showSuccess('密码设置成功');
+      navigate('/', { replace: true });
       setLoading(false);
     } catch (err) {
       sdk.tips.showError('密码设置失败');
