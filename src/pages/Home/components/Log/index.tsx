@@ -95,7 +95,13 @@ export function Log({ date, logType, style = {} }) {
       case 'unlock_password':
       case 'unlock_face': {
         // id可能是由name+分隔符+id构成的字符串
-        const [id, name] = data.id.split(SPLIT_STR);
+        let name = '';
+        if (data.userid) {
+          const user = (deviceData.users || []).find(item => item.userid === data.userid);
+          name = user?.name;
+        } else {
+          name = data.id.split(SPLIT_STR)[1];
+        }
         if (name) {
           labelNode = `${name}使用${label}`;
         }
