@@ -11,6 +11,17 @@ import { useState, useEffect } from 'react';
 
 import './index.less';
 
+const countCharacters = (str: string) => {
+  if (!str) {
+    return 0;
+  }
+  // 匹配所有的中文字符和英文字符
+  const pattern = /[\u4e00-\u9fa5]|[a-zA-Z]/g;
+  // 将所有的中文字符替换为两个英文字符，再计算字符串长度
+  const len = str.replace(pattern, 'aa').length;
+  return len;
+};
+
 export function UserSetting() {
   const { id } = useParams();
   const [{ userInfo }, { editUser }] = useUser({ id: id as string });
@@ -186,8 +197,14 @@ export function UserSetting() {
         <Input
           autoFocus
           value={name}
-          maxLength={5}
-          onChange={(val) => setName(val)}
+          maxLength={10}
+          onChange={(val) => {
+            const length = countCharacters(val);
+            if (length > 10) {
+              return;
+            }
+            setName(val);
+          }}
           placeholder="请输入用户名"
         ></Input>
       </div>
