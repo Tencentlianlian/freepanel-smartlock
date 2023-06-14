@@ -260,6 +260,7 @@ export function Home() {
         style={{
           color: '#fff',
           marginLeft: 10,
+          whiteSpace: 'nowrap',
           backgroundImage: 'linear-gradient(135deg,#3d8bff,#06f)'
         }}
         onClick={() => {
