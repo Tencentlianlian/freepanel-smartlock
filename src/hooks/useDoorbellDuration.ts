@@ -13,11 +13,25 @@ export function useDoorbellDuration() {
   const notifyPeriod = deviceData['notify_period'] ||
     Number((notifyPeriodProp?.define)?.start) ||
     3;
-  const doorbellValid = Date.now() < expiration;
+  const doorbellValid = Date.now() + 1000 < expiration;
   useEffect(() => {
+    let timer;
+    if (doorbell) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setDoorbell(false);
+      }, expiration - Date.now());
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [expiration, doorbell]);
+  useEffect(() => {
+    
     if (doorbellValid) {
       setDoorbell(true);
     }
+
     const handler = ({ Payload, deviceId }) => {
       if (deviceId === sdk.deviceId) {
         console.log('wsEventReport', Payload);
