@@ -16,7 +16,7 @@ export function useDoorbellDuration() {
   const doorbellValid = Date.now() + 1000 < expiration;
   useEffect(() => {
     let timer;
-    if (doorbell) {
+    if (expiration > Date.now()) {
       clearTimeout(timer);
       timer = setTimeout(() => {
         setDoorbell(false);
@@ -25,9 +25,9 @@ export function useDoorbellDuration() {
     return () => {
       clearTimeout(timer);
     };
-  }, [expiration, doorbell]);
-  useEffect(() => {
-    
+  }, [expiration]);
+
+  useEffect(() => {    
     if (doorbellValid) {
       setDoorbell(true);
     }
