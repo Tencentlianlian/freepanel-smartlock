@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Cell,  Btn } from 'qcloud-iot-panel-component';
 import { Input } from 'antd-mobile';
 import { useUnlockPwd } from '@src/hooks/useUnlockPwd';
@@ -19,6 +19,7 @@ export function UnlockPwd() {
   const [loading, setLoading] = useState(false);
   const { sp_check_code } = useUnlockPwd();
   const navigate = useNavigate();
+  const submitRef = useRef(false);
   const verify = async () => {
     if (sp_check_code) {
       if (!oldPwd) {
@@ -41,6 +42,12 @@ export function UnlockPwd() {
     }
     return true;
   };
+
+  useEffect(() => {
+    if (sp_check_code && submitRef.current) {
+      navigate('/', { replace: true });
+    }
+  }, [sp_check_code]);
   
   const savePwd = async () => {
     const ok = await verify();
@@ -53,8 +60,8 @@ export function UnlockPwd() {
         sp_check_code: sign,
         action_type: Action.Add
       }, 'set_safe_pwd', sdk.deviceId);
-      sdk.tips.showSuccess('密码设置成功');
-      navigate('/', { replace: true });
+      submitRef.current = true;
+      await sdk.tips.showSuccess('密码设置成功');
       setLoading(false);
     } catch (err) {
       sdk.tips.showError('密码设置失败');
@@ -73,6 +80,7 @@ export function UnlockPwd() {
         sp_check_code: sign,
         action_type: Action.Add
       }, 'set_safe_pwd', sdk.deviceId);
+      submitRef.current = true;
       sdk.tips.showSuccess('密码设置成功');
       setLoading(false);
     } catch (err) {
